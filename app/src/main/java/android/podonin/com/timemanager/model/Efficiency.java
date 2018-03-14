@@ -5,5 +5,5 @@ package android.podonin.com.timemanager.model;
  */
 
 public enum Efficiency {
-    one, two, three, four, five, six, seven, eight, nine, ten
+    zero, one, two, three, four, five, six, seven, eight, nine, ten
 }

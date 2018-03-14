@@ -1,24 +1,32 @@
 package android.podonin.com.timemanager.model;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by User on 14.03.2018.
  */
 
-public class Subcategory {
-    private Category mCategory;
+public class Subcategory extends RealmObject {
+    @PrimaryKey
+    private long mId;
+    private String mCategory;
     private String mName;
 
-    public Subcategory(Category category, String name) {
-        mCategory = category;
-        mName = name;
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        mId = id;
     }
 
     public Category getCategory() {
-        return mCategory;
+        return Category.valueOf(mCategory);
     }
 
     public void setCategory(Category category) {
-        mCategory = category;
+        mCategory = category.toString();
     }
 
     public String getName() {
