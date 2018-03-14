@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TimeManager</string>
+    <string name="body">Тело</string>
+    <string name="business">Дело</string>
+    <string name="spirit">Душа</string>
+    <string name="relationships">Отношения</string>
 </resources>
