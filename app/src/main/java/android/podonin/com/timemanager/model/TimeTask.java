@@ -14,19 +14,10 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class TimeTask extends RealmObject{
-    @PrimaryKey
-    private long mId;
     private String mTaskBody;
     private Date mStartDate;
     private RealmList<TaskSubcategoryEfficiency> mSubcategoryEfficiencies;
 
-    public long getId() {
-        return mId;
-    }
-
-    public void setId(long id) {
-        mId = id;
-    }
 
     public String getTaskBody() {
         return mTaskBody;

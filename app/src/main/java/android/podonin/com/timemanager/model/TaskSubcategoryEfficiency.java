@@ -8,19 +8,9 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class TaskSubcategoryEfficiency extends RealmObject {
-    @PrimaryKey
-    private long mId;
     private TimeTask mTimeTask;
     private Subcategory mSubcategory;
     private String mEfficiency;
-
-    public long getId() {
-        return mId;
-    }
-
-    public void setId(long id) {
-        mId = id;
-    }
 
     public TimeTask getTimeTask() {
         return mTimeTask;

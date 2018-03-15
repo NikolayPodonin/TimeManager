@@ -8,18 +8,8 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class Subcategory extends RealmObject {
-    @PrimaryKey
-    private long mId;
     private String mCategory;
     private String mName;
-
-    public long getId() {
-        return mId;
-    }
-
-    public void setId(long id) {
-        mId = id;
-    }
 
     public Category getCategory() {
         return Category.valueOf(mCategory);
