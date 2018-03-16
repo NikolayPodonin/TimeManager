@@ -36,6 +36,9 @@ public class TimeTask extends RealmObject{
     }
 
     public RealmList<TaskSubcategoryEfficiency> getSubcategoryEfficiencies() {
+        if(mSubcategoryEfficiencies == null) {
+            mSubcategoryEfficiencies = new RealmList<>();
+        }
         return mSubcategoryEfficiencies;
     }
 

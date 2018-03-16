@@ -1,7 +1,12 @@
 package android.podonin.com.timemanager;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.podonin.com.timemanager.databinding.FragmentTasksBinding;
+import android.podonin.com.timemanager.databinding.ListItemTaskBinding;
 import android.podonin.com.timemanager.model.TimeTask;
+import android.podonin.com.timemanager.repository.Repository;
+import android.podonin.com.timemanager.viewmodel.TimeTaskViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,8 +27,8 @@ import java.util.List;
 public class TasksFragment extends Fragment {
 
 
-    private RecyclerView mRecyclerView;
     private List<TimeTask> mTimeTasks = new ArrayList<>();
+    private Repository mRepository;
 
     public static TasksFragment newInstance(){
         return new TasksFragment();
@@ -32,34 +37,34 @@ public class TasksFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tasks, container, false);
-        mRecyclerView = view.findViewById(R.id.tasks_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRepository = new Repository();
+        mTimeTasks = mRepository.getAllTimeTasks();
+
+        FragmentTasksBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_tasks, container, false);
+
+        binding.tasksRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         if(isAdded()){
-            mRecyclerView.setAdapter(new TasksAdapter(mTimeTasks));
+            binding.tasksRecyclerView.setAdapter(new TasksAdapter(mTimeTasks));
         }
 
-
-        return view;
+        return binding.getRoot();
     }
 
     private class TasksHolder extends RecyclerView.ViewHolder{
-        private TextView mTaskBody;
-        private TextView mTaskDate;
         private TimeTask mTimeTask;
+        private ListItemTaskBinding mItemTaskBinding;
 
-        public TasksHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.list_item_task, parent, false));
-
-            mTaskBody = (TextView) itemView.findViewById(R.id.task_body);
-            mTaskDate = (TextView) itemView.findViewById(R.id.task_date);
+        public TasksHolder(ListItemTaskBinding binding) {
+            super(binding.getRoot());
+            mItemTaskBinding = binding;
+            mItemTaskBinding.setTask(new TimeTaskViewModel());
         }
 
 
         public void bind(TimeTask timeTask){
             mTimeTask = timeTask;
-            mTaskBody.setText(timeTask.getTaskBody());
-            mTaskDate.setText(timeTask.getStartDate().toString());
+            mItemTaskBinding.getTask().setTimeTask(timeTask);
+            mItemTaskBinding.executePendingBindings();
         }
     }
 
@@ -73,7 +78,8 @@ public class TasksFragment extends Fragment {
         @Override
         public TasksHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            return new TasksHolder(layoutInflater, parent);
+            ListItemTaskBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.list_item_task, parent, false);
+            return new TasksHolder(binding);
         }
 
         @Override

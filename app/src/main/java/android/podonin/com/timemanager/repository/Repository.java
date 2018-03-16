@@ -2,6 +2,7 @@ package android.podonin.com.timemanager.repository;
 
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
+import android.podonin.com.timemanager.model.TimeTask;
 
 import java.util.List;
 
@@ -25,6 +26,16 @@ public class Repository {
     public void addSubcategory(Subcategory subcategory){
         mRealm.beginTransaction();
         mRealm.copyToRealm(subcategory);
+        mRealm.commitTransaction();
+    }
+
+    public List<TimeTask> getAllTimeTasks(){
+        return mRealm.where(TimeTask.class).findAll();
+    }
+
+    public void addTimeTask(TimeTask timeTask) {
+        mRealm.beginTransaction();
+        mRealm.copyToRealm(timeTask);
         mRealm.commitTransaction();
     }
 }
