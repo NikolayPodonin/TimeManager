@@ -7,21 +7,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.github.sundeepk.compactcalendarview.CompactCalendarView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/compactcalendar_view"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            app:compactCalendarBackgroundColor="#00bcd4"
-            app:compactCalendarCurrentDayBackgroundColor="#1a8cd7"
-            app:compactCalendarCurrentSelectedDayBackgroundColor="#E57373"
-            app:compactCalendarCurrentSelectedDayIndicatorStyle="no_fill_large_indicator"
-            app:compactCalendarTextColor="#FFF"
-            app:compactCalendarTextSize="12sp">
-
-        </com.github.sundeepk.compactcalendarview.CompactCalendarView>
+        <android.podonin.com.timemanager.calendarview.EventCalendarView
+            />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tasks_recycler_view"
