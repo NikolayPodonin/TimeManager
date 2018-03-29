@@ -10,6 +10,8 @@ import android.support.v4.app.Fragment;
 
 import java.util.Calendar;
 
+import io.realm.Realm;
+
 /**
  * Created by Ybr on 16.03.2018.
  */
@@ -36,10 +38,9 @@ public class TasksActivity extends SingleFragmentActivity {
             TimeTask timeTask = new TimeTask();
             timeTask.setStartDate(Calendar.getInstance().getTime());
             timeTask.setTaskBody(sc.getName());
-            TaskSubcategoryEfficiency subcategoryEfficiency = new TaskSubcategoryEfficiency();
-            subcategoryEfficiency.setEfficiency(Efficiency.zero);
-            timeTask.getSubcategoryEfficiencies().add(subcategoryEfficiency);
-            mRepository.addTimeTask(timeTask);
+            final TimeTask t = mRepository.addTimeTask(timeTask);
+            TaskSubcategoryEfficiency subcategoryEfficiency = new TaskSubcategoryEfficiency(t, sc);
+            mRepository.addTaskSubcategoryEfficiency(subcategoryEfficiency);
         }
 
         return TasksFragment.newInstance();

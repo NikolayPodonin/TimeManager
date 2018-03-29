@@ -25,4 +25,9 @@ public class TimeTaskViewModel {
     public String getTaskDate(){
         return mTimeTask.getStartDate().toString();
     }
+
+    //for test
+    public String getTaskSubcategoryEfficiency() {
+        return  mTimeTask.getSubcategoryEfficiencies().first().getSubcategory().getName() + ", " + mTimeTask.getSubcategoryEfficiencies().first().getEfficiency().toString();
+    }
 }

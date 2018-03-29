@@ -2,6 +2,7 @@ package android.podonin.com.timemanager.repository;
 
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
+import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 
 import java.util.List;
@@ -20,22 +21,32 @@ public class Repository {
     }
 
     public List<Subcategory> getAllSubcategories(){
-       return mRealm.where(Subcategory.class).findAll();
+        return mRealm.where(Subcategory.class).findAll();
     }
 
-    public void addSubcategory(Subcategory subcategory){
+    public Subcategory addSubcategory(Subcategory subcategory){
         mRealm.beginTransaction();
-        mRealm.copyToRealm(subcategory);
+        Subcategory s = mRealm.copyToRealm(subcategory);
         mRealm.commitTransaction();
+        return s;
     }
 
     public List<TimeTask> getAllTimeTasks(){
         return mRealm.where(TimeTask.class).findAll();
     }
 
-    public void addTimeTask(TimeTask timeTask) {
+    public TimeTask addTimeTask(TimeTask timeTask) {
         mRealm.beginTransaction();
-        mRealm.copyToRealm(timeTask);
+        TimeTask tt = mRealm.copyToRealm(timeTask);
         mRealm.commitTransaction();
+        return tt;
+    }
+
+    public TaskSubcategoryEfficiency addTaskSubcategoryEfficiency(TaskSubcategoryEfficiency subcategoryEfficiency) {
+        mRealm.beginTransaction();
+        TaskSubcategoryEfficiency tse = mRealm.copyToRealm(subcategoryEfficiency);
+        tse.getTimeTask().getSubcategoryEfficiencies().add(tse);
+        mRealm.commitTransaction();
+        return tse;
     }
 }
