@@ -45,7 +45,7 @@ dependencies {
 
     implementation 'com.github.sundeepk:compact-calendar-view:2.0.2.3'
 
-    implementation ('com.wdullaer:materialdatetimepicker:3.5.1') {
+    implementation('com.wdullaer:materialdatetimepicker:3.5.1') {
         exclude group: 'com.android.support'
     }
 }

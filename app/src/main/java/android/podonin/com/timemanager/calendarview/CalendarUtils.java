@@ -11,7 +11,9 @@ public class CalendarUtils {
     /**
      * Constant value for a 'no time' timestamp
      */
-    private static final long NO_TIME_MILLIS = -1;
+    static final long NO_TIME_MILLIS = -1;
+
+    private static final String TIMEZONE_UTC = "UTC";
 
     public static int sWeekStart = Calendar.getInstance(TimeZone.getDefault()).getFirstDayOfWeek();
     
@@ -70,6 +72,49 @@ public class CalendarUtils {
         int size = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         calendar.recycle();
         return size;
+    }
+
+    public static long addMonths(long todayMillis, int months) {
+        if(isNotTime(todayMillis)){
+            return NO_TIME_MILLIS;
+        }
+        DateOnlyCalendar calendar = DateOnlyCalendar.fromTime(todayMillis);
+        calendar.add(Calendar.MONTH, months);
+        long result = calendar.getTimeInMillis();
+        calendar.recycle();
+        return result;
+    }
+
+    public static long toLocalTimeZone(long utsTimeMillis) {
+        return convertTimeZone(TimeZone.getDefault(), TimeZone.getTimeZone(TIMEZONE_UTC), utsTimeMillis);
+    }
+
+    private static long convertTimeZone(TimeZone fromTimeZone, TimeZone toTimeZone, long timeMillis) {
+        DateOnlyCalendar fromCalendar = DateOnlyCalendar.obtain();
+        fromCalendar.setTimeZone(fromTimeZone);
+        fromCalendar.setTimeInMillis(timeMillis);
+        DateOnlyCalendar toCalendar = DateOnlyCalendar.obtain();
+        toCalendar.setTimeZone(fromTimeZone);
+        toCalendar.set(fromCalendar.get(Calendar.YEAR),
+                fromCalendar.get(Calendar.MONTH),
+                fromCalendar.get(Calendar.DAY_OF_MONTH),
+                fromCalendar.get(Calendar.HOUR_OF_DAY),
+                fromCalendar.get(Calendar.MINUTE),
+                fromCalendar.get(Calendar.SECOND));
+        long localTimeMillis = toCalendar.getTimeInMillis();
+        fromCalendar.recycle();
+        toCalendar.recycle();
+        return localTimeMillis;
+    }
+
+    public static int dayOfMonth(long timeMillis) {
+        if (isNotTime(timeMillis)){
+            return -1;
+        }
+        DateOnlyCalendar calendar = DateOnlyCalendar.fromTime(timeMillis);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        calendar.recycle();
+        return day;
     }
 
     private static class DateOnlyCalendar extends GregorianCalendar{

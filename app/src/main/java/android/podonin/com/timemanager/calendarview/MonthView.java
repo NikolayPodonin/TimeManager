@@ -8,6 +8,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +18,24 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class MonthView extends RecyclerView{
 
     private static final int SPANS_COUNT = 7; // days in week
     private long mMonthMillis;
     private GridAdapter mAdapter;
+    private OnDateChangeListener mListener;
+
+    interface OnDateChangeListener {
+        void onSelectedDayChange(long dayMillis);
+    }
+
+    public void setOnDateChangeListener(OnDateChangeListener listener) {
+        mListener = listener;
+    }
 
     public MonthView(Context context) {
         this(context, null);
@@ -43,7 +56,7 @@ public class MonthView extends RecyclerView{
         setCalendar(CalendarUtils.today());
     }
 
-    private void setCalendar(long monthMillis) {
+    public void setCalendar(long monthMillis) {
         if(CalendarUtils.isNotTime(monthMillis)){
             throw new IllegalArgumentException("Invalid timestamp value");
         }
@@ -52,6 +65,36 @@ public class MonthView extends RecyclerView{
         }
         mMonthMillis = monthMillis;
         mAdapter = new GridAdapter(monthMillis);
+        mAdapter.registerAdapterDataObserver(new AdapterDataObserver() {
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount, @Nullable Object payload) {
+                if (mListener == null){
+                    return;
+                }
+                if (payload instanceof SelectionPayload){
+                    mListener.onSelectedDayChange(((SelectionPayload)payload).mTimeMillis);
+                }
+            }
+        });
+        setAdapter(mAdapter);
+    }
+
+    public void setSelectedDay(long dayMillis) {
+        if (CalendarUtils.isNotTime(mMonthMillis)) {
+            return;
+        }
+        if (CalendarUtils.isNotTime(dayMillis)){
+            mAdapter.setSelectedDay(CalendarUtils.NO_TIME_MILLIS);
+        } else if (CalendarUtils.sameMonth(mMonthMillis, dayMillis)){
+            mAdapter.setSelectedDay(dayMillis);
+        } else {
+            mAdapter.setSelectedDay(CalendarUtils.NO_TIME_MILLIS);
+        }
+
+    }
+
+    public void swapCursor(@NonNull EventCursor cursor) {
+        mAdapter.swapCursor(cursor);
     }
 
     private static abstract class CellViewHolder extends RecyclerView.ViewHolder{
@@ -79,6 +122,14 @@ public class MonthView extends RecyclerView{
         }
     }
 
+    private static class SelectionPayload {
+        private final long mTimeMillis;
+
+        public SelectionPayload(long timeMillis) {
+            this.mTimeMillis = timeMillis;
+        }
+    }
+
     private class GridAdapter extends Adapter<CellViewHolder> {
         private static final int VIEW_TYPE_HEADER = 0;
         private static final int VIEW_TYPE_CONTENT = 1;
@@ -87,6 +138,8 @@ public class MonthView extends RecyclerView{
         private final int mStartOffset;
         private final int mDays;
         private int mSelectedPosition = -1;
+        private final Set<Integer> mEvents = new HashSet<>();
+        private EventCursor mCursor;
 
         public GridAdapter(long monthMillis) {
             mWeekDays = DateFormatSymbols.getInstance().getShortWeekdays();
@@ -138,14 +191,90 @@ public class MonthView extends RecyclerView{
                         spannable.setSpan(new CircleSpan(textView.getContext()),
                                 0, dayString.length(),
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } else if (mEvents.contains(dayIndex)){
+                        spannable.setSpan(new UnderDotSpan(textView.getContext()),
+                                0, dayString.length(),
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
+                    textView.setText(spannable, TextView.BufferType.SPANNABLE);
+                    textView.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            setSelectedPosition(adapterPosition, true);
+                        }
+                    });
                 }
             }
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            return mDays;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (position < SPANS_COUNT){
+                return VIEW_TYPE_HEADER;
+            }
+            return VIEW_TYPE_CONTENT;
+        }
+
+        private void setSelectedPosition(int position, boolean notifyObservers) {
+            int last = mSelectedPosition;
+            if (position == last){
+                return;
+            }
+            mSelectedPosition = position;
+            if (last >= 0){
+                notifyItemChanged(last);
+            }
+            if (position >= 0) {
+                long timeMillis = mBaseTimeMillis + (mSelectedPosition - mStartOffset) * DateUtils.DAY_IN_MILLIS;
+                notifyItemChanged(position, notifyObservers ? new SelectionPayload(timeMillis) : null);
+            }
+        }
+
+        public void swapCursor(@NonNull EventCursor cursor) {
+            if (mCursor == cursor){
+                return;
+            }
+            mCursor = cursor;
+            Iterator<Integer> iterator = mEvents.iterator();
+            while (iterator.hasNext()){
+                int dayIndex = iterator.next();
+                iterator.remove();
+                notifyItemChanged(dayIndex + mStartOffset);
+            }
+            if(!mCursor.moveToFirst()){
+                return;
+            }
+            // TODO improve performance
+            do {
+                long start = mCursor.getDateTimeStart();
+                long end = mCursor.getDateTimeEnd();
+                boolean allDay = mCursor.getAllDay();
+                // convert all-day time from UTC to local
+                if (allDay){
+                    start = CalendarUtils.toLocalTimeZone(start);
+                    end = CalendarUtils.toLocalTimeZone(end) - DateUtils.DAY_IN_MILLIS;
+                }
+                int startIndex = (int) ((start - mBaseTimeMillis) / DateUtils.DAY_IN_MILLIS);
+                int endIndex = (int) ((end - mBaseTimeMillis) / DateUtils.DAY_IN_MILLIS);
+                endIndex = Math.min(endIndex, getItemCount() - mStartOffset - 1);
+                for (int dayIndex = startIndex; dayIndex <= endIndex; dayIndex++){
+                    if (!mEvents.contains(dayIndex));
+                    mEvents.add(dayIndex);
+                    notifyItemChanged(dayIndex + mStartOffset);
+                }
+            } while (mCursor.moveToNext());
+        }
+
+        public void setSelectedDay(long dayMillis) {
+            setSelectedPosition(CalendarUtils.isNotTime(dayMillis) ? -1 :
+                    mStartOffset + CalendarUtils.dayOfMonth(dayMillis) - 1, false);
         }
     }
+
+
 }
