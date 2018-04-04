@@ -1,4 +1,4 @@
-package android.podonin.com.timemanager.calendarview;
+package android.podonin.com.timemanager.calendarwidget;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.podonin.com.timemanager.calendarview.EventCalendarView
+        <android.podonin.com.timemanager.calendarwidget.EventCalendarView
             />
 
         <android.support.v7.widget.RecyclerView

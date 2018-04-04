@@ -6,9 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    tools:context=".calendarview.DeleteMeActivity">
+    tools:context=".DeleteMeActivity">
 
-    <android.podonin.com.timemanager.calendarview.EventCalendarView
+    <android.podonin.com.timemanager.calendarwidget.EventCalendarView
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

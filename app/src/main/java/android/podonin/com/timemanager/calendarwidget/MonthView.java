@@ -1,4 +1,4 @@
-package android.podonin.com.timemanager.calendarview;
+package android.podonin.com.timemanager.calendarwidget;
 
 import android.content.Context;
 import android.podonin.com.timemanager.R;
@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -93,10 +92,6 @@ public class MonthView extends RecyclerView{
 
     }
 
-    public void swapCursor(@NonNull EventCursor cursor) {
-        mAdapter.swapCursor(cursor);
-    }
-
     private static abstract class CellViewHolder extends RecyclerView.ViewHolder{
 
         public CellViewHolder(View itemView) {
@@ -138,8 +133,6 @@ public class MonthView extends RecyclerView{
         private final int mStartOffset;
         private final int mDays;
         private int mSelectedPosition = -1;
-        private final Set<Integer> mEvents = new HashSet<>();
-        private EventCursor mCursor;
 
         public GridAdapter(long monthMillis) {
             mWeekDays = DateFormatSymbols.getInstance().getShortWeekdays();
@@ -191,10 +184,6 @@ public class MonthView extends RecyclerView{
                         spannable.setSpan(new CircleSpan(textView.getContext()),
                                 0, dayString.length(),
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    } else if (mEvents.contains(dayIndex)){
-                        spannable.setSpan(new UnderDotSpan(textView.getContext()),
-                                0, dayString.length(),
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     textView.setText(spannable, TextView.BufferType.SPANNABLE);
                     textView.setOnClickListener(new OnClickListener() {
@@ -235,40 +224,6 @@ public class MonthView extends RecyclerView{
             }
         }
 
-        public void swapCursor(@NonNull EventCursor cursor) {
-            if (mCursor == cursor){
-                return;
-            }
-            mCursor = cursor;
-            Iterator<Integer> iterator = mEvents.iterator();
-            while (iterator.hasNext()){
-                int dayIndex = iterator.next();
-                iterator.remove();
-                notifyItemChanged(dayIndex + mStartOffset);
-            }
-            if(!mCursor.moveToFirst()){
-                return;
-            }
-            // TODO improve performance
-            do {
-                long start = mCursor.getDateTimeStart();
-                long end = mCursor.getDateTimeEnd();
-                boolean allDay = mCursor.getAllDay();
-                // convert all-day time from UTC to local
-                if (allDay){
-                    start = CalendarUtils.toLocalTimeZone(start);
-                    end = CalendarUtils.toLocalTimeZone(end) - DateUtils.DAY_IN_MILLIS;
-                }
-                int startIndex = (int) ((start - mBaseTimeMillis) / DateUtils.DAY_IN_MILLIS);
-                int endIndex = (int) ((end - mBaseTimeMillis) / DateUtils.DAY_IN_MILLIS);
-                endIndex = Math.min(endIndex, getItemCount() - mStartOffset - 1);
-                for (int dayIndex = startIndex; dayIndex <= endIndex; dayIndex++){
-                    if (!mEvents.contains(dayIndex));
-                    mEvents.add(dayIndex);
-                    notifyItemChanged(dayIndex + mStartOffset);
-                }
-            } while (mCursor.moveToNext());
-        }
 
         public void setSelectedDay(long dayMillis) {
             setSelectedPosition(CalendarUtils.isNotTime(dayMillis) ? -1 :

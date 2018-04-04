@@ -1,4 +1,4 @@
-package android.podonin.com.timemanager.calendarview;
+package android.podonin.com.timemanager.calendarwidget;
 
 import android.database.ContentObserver;
 import android.os.Bundle;
@@ -22,9 +22,7 @@ class MonthViewPagerAdapter extends PagerAdapter{
     private final MonthView.OnDateChangeListener mListener;
     private final List<Long> mMonths = new ArrayList<>(getCount());
     private final List<MonthView> mViews = new ArrayList<>(getCount());
-    private final List<EventCursor> mCursors = new ArrayList<>(getCount());
     private long mSelectedDayMillis = CalendarUtils.today();
-    private ArrayMap<EventCursor, ContentObserver> mObservers = new ArrayMap<>(getCount());
 
     public MonthViewPagerAdapter(MonthView.OnDateChangeListener listener) {
         mListener = listener;
@@ -33,7 +31,6 @@ class MonthViewPagerAdapter extends PagerAdapter{
         for (int i = 0; i < getCount(); i++){
             mMonths.add(CalendarUtils.addMonths(todayMillis, i - mid));
             mViews.add(null);
-            mCursors.add(null);
         }
     }
 
@@ -63,7 +60,6 @@ class MonthViewPagerAdapter extends PagerAdapter{
         if (mViews.get(position) != null){
             mViews.get(position).setCalendar(mMonths.get(position));
         }
-        bindCursor(position);
         bindSelectedDay(position);
     }
 
@@ -73,11 +69,6 @@ class MonthViewPagerAdapter extends PagerAdapter{
         }
     }
 
-    private void bindCursor(int position) {
-        if (mCursors.get(position) != null && mViews.get(position) != null){
-            mViews.get(position).swapCursor(mCursors.get(position));
-        }
-    }
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
@@ -101,9 +92,9 @@ class MonthViewPagerAdapter extends PagerAdapter{
             return;
         }
         mSelectedDayMillis = savedState.getLong(STATE_SELECTED_DAY_MILLIS);
-        long firstMonthNillis = savedState.getLong(STATE_FIRST_MONTH_MILLIS);
+        long firstMonthMillis = savedState.getLong(STATE_FIRST_MONTH_MILLIS);
         for (int i = 0; i < getCount(); i++){
-            mMonths.set(i, CalendarUtils.addMonths(firstMonthNillis, i));
+            mMonths.set(i, CalendarUtils.addMonths(firstMonthMillis, i));
         }
     }
 
@@ -128,10 +119,6 @@ class MonthViewPagerAdapter extends PagerAdapter{
         for (int i = 0; i < getCount() - 2; i++){
             mMonths.add(CalendarUtils.addMonths(mMonths.remove(0), getCount()));
         }
-        // TODO only deactivate non reusable cursors
-        for (int i = 0; i < getCount(); i++){
-            swapCursor(i, null, null);
-        }
         // rebind current item (2nd) and 2 adjacent items
         for (int i = 0; i <= 2; i++){
             bind(i);
@@ -141,11 +128,6 @@ class MonthViewPagerAdapter extends PagerAdapter{
     public void shiftRight() {
         for (int i = 0; i < getCount() - 2; i++){
             mMonths.add(0, CalendarUtils.addMonths(mMonths.remove(getCount() - 1), -getCount()));
-            mCursors.add(0, mCursors.remove(getCount() - 1));
-        }
-        // TODO only deactivate non reusable cursors
-        for (int i = 0; i < getCount(); i++){
-            swapCursor(i, null, null);
         }
         // rebind current item (2nd) and 2 adjacent items
         for (int i = 0; i <= 2; i++){
@@ -154,33 +136,4 @@ class MonthViewPagerAdapter extends PagerAdapter{
     }
 
 
-    private void swapCursor(int position, @NonNull EventCursor cursor, ContentObserver contentObserver) {
-        deactivate(mCursors.get(position));
-        if(cursor != null){
-            cursor.registerContentObserver(contentObserver);
-        }
-        mCursors.set(position, cursor);
-        bindCursor(position);
-    }
-
-    protected void swapCursor(long monthMillis, @NonNull EventCursor cursor, ContentObserver contentObserver){
-        for (int i = 0; i < mMonths.size(); i++){
-            if (CalendarUtils.sameMonth(monthMillis, mMonths.get(i))){
-                swapCursor(i, cursor, contentObserver);
-                break;
-            }
-        }
-    }
-
-    private void deactivate(EventCursor cursor) {
-        if (cursor != null){
-            cursor.unregisterContentObserver(mObservers.get(cursor));
-            mObservers.remove(cursor);
-            cursor.close();
-        }
-    }
-
-    public EventCursor getCursor(int position) {
-        return mCursors.get(position);
-    }
 }

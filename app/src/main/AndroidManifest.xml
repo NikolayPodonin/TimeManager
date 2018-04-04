@@ -17,7 +17,7 @@
         <activity android:name=".TasksActivity">
 
         </activity>
-        <activity android:name=".calendarview.DeleteMeActivity">
+        <activity android:name=".DeleteMeActivity">
             <intent-filter>
             <action android:name="android.intent.action.MAIN" />
 

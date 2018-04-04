@@ -1,6 +1,8 @@
-package android.podonin.com.timemanager.calendarview;
+package android.podonin.com.timemanager.calendarwidget;
 
+import android.content.Context;
 import android.support.v4.util.Pools;
+import android.text.format.DateUtils;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -115,6 +117,11 @@ public class CalendarUtils {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         calendar.recycle();
         return day;
+    }
+
+    public static String toMonthString(Context context, long timeMillis) {
+        return DateUtils.formatDateRange(context, timeMillis, timeMillis,
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY | DateUtils.FORMAT_NO_YEAR);
     }
 
     private static class DateOnlyCalendar extends GregorianCalendar{

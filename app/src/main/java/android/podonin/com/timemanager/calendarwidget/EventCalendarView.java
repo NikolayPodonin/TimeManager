@@ -1,8 +1,6 @@
-package android.podonin.com.timemanager.calendarview;
+package android.podonin.com.timemanager.calendarwidget;
 
 import android.content.Context;
-import android.database.ContentObserver;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -20,37 +18,17 @@ public class EventCalendarView extends ViewPager {
                     notifyDayChange(dayMillis);
                 }
             };
+
     private OnChangeListener mListener;
-    private CalendarAdapter mCalendarAdapter;
 
     public interface OnChangeListener{
         void onSelectedDayChange(long dayMillis);
     }
 
-
-    public static abstract class CalendarAdapter {
-
-
-        private EventCalendarView mCalendarView;
-
-        /**
-         * Loads events for given month. Should call {@link #bindEvents(long, EventCursor)} on complete
-         * @param monthMillis    month in milliseconds
-         * @see {@link #bindEvents(long, EventCursor)}
-         */
-        protected void loadEvents(long monthMillis) {
-            // override to load events
-        }
-
-        /**
-         * Binds events for given month that have been loaded via {@link #loadEvents(long)}
-         * @param monthMillis    month in milliseconds
-         * @param cursor         {@link android.provider.CalendarContract.Events} cursor wrapper
-         */
-        public final void bindEvents(long monthMillis, EventCursor cursor){
-            mCalendarView.swapCursor(monthMillis, cursor);
-        }
+    public void setListener(OnChangeListener listener) {
+        mListener = listener;
     }
+
 
     public EventCalendarView(@NonNull Context context) {
         this(context, null);
@@ -87,7 +65,6 @@ public class EventCalendarView extends ViewPager {
             public void onPageScrollStateChanged(int state) {
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
                     syncPages(getCurrentItem());
-                    loadEvents(getCurrentItem());
                 } else if (state == SCROLL_STATE_DRAGGING){
                     mDragging = true;
                 }
@@ -122,41 +99,6 @@ public class EventCalendarView extends ViewPager {
             }
             if (position < mPagerAdapter.getCount() - 1){
                 mPagerAdapter.bind(position + 1);
-            }
-        }
-    }
-
-    private void loadEvents(int position) {
-        if (mCalendarAdapter != null && mPagerAdapter.getCursor(position) == null){
-            mCalendarAdapter.loadEvents(mPagerAdapter.getMonth(position));
-        }
-    }
-
-    private void swapCursor(long monthMillis, EventCursor cursor) {
-        mPagerAdapter.swapCursor(monthMillis, cursor, new PagerContentObserver(monthMillis));
-    }
-
-    private class PagerContentObserver extends ContentObserver{
-        private final long mMonthMillis;
-
-        public PagerContentObserver(long monthMillis) {
-            super(new Handler());
-            mMonthMillis = monthMillis;
-        }
-
-        @Override
-        public boolean deliverSelfNotifications() {
-            return true;
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            // invalidate previous cursor for given month
-            mPagerAdapter.swapCursor(mMonthMillis, null, null);
-            // reload events if given month is active month
-            // hidden month will ve reloaded upon being swiped to
-            if(CalendarUtils.sameMonth(mMonthMillis, mPagerAdapter.getMonth(getCurrentItem()))){
-                loadEvents(getCurrentItem());
             }
         }
     }
