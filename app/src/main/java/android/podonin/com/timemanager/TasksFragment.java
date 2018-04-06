@@ -54,7 +54,7 @@ public class TasksFragment extends Fragment {
         private TimeTask mTimeTask;
         private ListItemTaskBinding mItemTaskBinding;
 
-        public TasksHolder(ListItemTaskBinding binding) {
+        public TasksHolder(@NonNull ListItemTaskBinding binding) {
             super(binding.getRoot());
             mItemTaskBinding = binding;
             mItemTaskBinding.setTask(new TimeTaskViewModel());

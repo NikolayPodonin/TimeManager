@@ -21,7 +21,7 @@ class MonthViewPagerAdapter extends PagerAdapter{
     private static final String STATE_SELECTED_DAY_MILLIS = "state:selectedDay";
     private final MonthView.OnDateChangeListener mListener;
     private final List<Long> mMonths = new ArrayList<>(getCount());
-    private final List<MonthView> mViews = new ArrayList<>(getCount());
+    final List<MonthView> mViews = new ArrayList<>(getCount());
     private long mSelectedDayMillis = CalendarUtils.today();
 
     public MonthViewPagerAdapter(MonthView.OnDateChangeListener listener) {

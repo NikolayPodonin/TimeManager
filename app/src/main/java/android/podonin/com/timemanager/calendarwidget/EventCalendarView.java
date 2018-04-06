@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.View;
 
 public class EventCalendarView extends ViewPager {
 
@@ -25,7 +26,7 @@ public class EventCalendarView extends ViewPager {
         void onSelectedDayChange(long dayMillis);
     }
 
-    public void setListener(OnChangeListener listener) {
+    public void setOnChangeListener(OnChangeListener listener) {
         mListener = listener;
     }
 
@@ -37,6 +38,18 @@ public class EventCalendarView extends ViewPager {
     public EventCalendarView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        // make this ViewPager's height WRAP_CONTENT
+        View child = mPagerAdapter.mViews.get(getCurrentItem());
+        if(child != null){
+            child.measure(widthMeasureSpec, heightMeasureSpec);
+            int height = child.getMeasuredHeight();
+            setMeasuredDimension(getMeasuredWidth(), height);
+        }
     }
 
     private void init() {
