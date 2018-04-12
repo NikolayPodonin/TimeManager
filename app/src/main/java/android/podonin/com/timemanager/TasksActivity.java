@@ -25,23 +25,24 @@ public class TasksActivity extends SingleFragmentActivity {
 
         mRepository = new Repository();
 
-        for (Category cat : Category.values()) {
-            for(Integer i = 0; i < 4; i++){
-                Subcategory sc = new Subcategory();
-                sc.setCategory(cat);
-                sc.setName(i.toString());
-                mRepository.addSubcategory(sc);
-            }
-        }
+//        for (Category cat : Category.values()) {
+//            for(Integer i = 0; i < 4; i++){
+//                Subcategory sc = new Subcategory();
+//                sc.setCategory(cat);
+//                sc.setName(i.toString());
+//                mRepository.addSubcategory(sc);
+//            }
+//        }
+//
+//        for (Subcategory sc: mRepository.getAllSubcategories()) {
+//            TimeTask timeTask = new TimeTask();
+//            timeTask.setStartDate(Calendar.getInstance().getTimeInMillis());
+//            timeTask.setTaskBody(sc.getName());
+//            final TimeTask t = mRepository.addTimeTask(timeTask);
+//            TaskSubcategoryEfficiency subcategoryEfficiency = new TaskSubcategoryEfficiency(t, sc);
+//            mRepository.addTaskSubcategoryEfficiency(subcategoryEfficiency);
+//        }
 
-        for (Subcategory sc: mRepository.getAllSubcategories()) {
-            TimeTask timeTask = new TimeTask();
-            timeTask.setStartDate(Calendar.getInstance().getTimeInMillis());
-            timeTask.setTaskBody(sc.getName());
-            final TimeTask t = mRepository.addTimeTask(timeTask);
-            TaskSubcategoryEfficiency subcategoryEfficiency = new TaskSubcategoryEfficiency(t, sc);
-            mRepository.addTaskSubcategoryEfficiency(subcategoryEfficiency);
-        }
 
         return TasksFragment.newInstance();
     }

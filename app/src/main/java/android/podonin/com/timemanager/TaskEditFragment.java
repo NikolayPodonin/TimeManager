@@ -11,6 +11,8 @@ import android.podonin.com.timemanager.viewmodel.TimeTaskViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,9 +49,10 @@ public class TaskEditFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mTaskEditBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_task_edit, container, false);
 
-        mTaskEditBinding.setTaskViewModel(new TimeTaskViewModel(getActivity()));
+        TimeTaskViewModel taskViewModel = new TimeTaskViewModel(getActivity());
+        mTaskEditBinding.setTaskViewModel(taskViewModel);
         mTaskEditBinding.getTaskViewModel().setTimeTask(mTimeTask);
-
+        mTaskEditBinding.taskBodyEdit.addTextChangedListener(taskViewModel);
 
         return mTaskEditBinding.getRoot();
     }
