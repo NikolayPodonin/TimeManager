@@ -3,8 +3,6 @@ package android.podonin.com.timemanager.viewmodel;
 import android.content.Context;
 import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.TimeTask;
-import android.podonin.com.timemanager.repository.Repository;
-import android.widget.DatePicker;
 
 /**
  * Created by Ybr on 17.03.2018.

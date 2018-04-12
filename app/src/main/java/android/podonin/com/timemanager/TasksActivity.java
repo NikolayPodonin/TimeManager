@@ -1,16 +1,13 @@
 package android.podonin.com.timemanager;
 
 import android.podonin.com.timemanager.model.Category;
-import android.podonin.com.timemanager.model.Efficiency;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
-import android.podonin.com.timemanager.repository.Repository;
+import android.podonin.com.timemanager.repository.RealmHelper;
 import android.support.v4.app.Fragment;
 
 import java.util.Calendar;
-
-import io.realm.Realm;
 
 /**
  * Created by Ybr on 16.03.2018.
@@ -18,29 +15,29 @@ import io.realm.Realm;
 
 public class TasksActivity extends SingleFragmentActivity {
 
-    Repository mRepository;
+    RealmHelper mRealmHelper;
 
     @Override
     protected Fragment createFragment() {
 
-        mRepository = new Repository();
+        mRealmHelper = new RealmHelper();
 
         for (Category cat : Category.values()) {
             for(Integer i = 0; i < 4; i++){
                 Subcategory sc = new Subcategory();
                 sc.setCategory(cat);
                 sc.setName(i.toString());
-                mRepository.addSubcategory(sc);
+                mRealmHelper.addSubcategory(sc);
             }
         }
 
-        for (Subcategory sc: mRepository.getAllSubcategories()) {
+        for (Subcategory sc: mRealmHelper.getAllSubcategories()) {
             TimeTask timeTask = new TimeTask();
             timeTask.setStartDate(Calendar.getInstance().getTimeInMillis());
             timeTask.setTaskBody(sc.getName());
-            final TimeTask t = mRepository.addTimeTask(timeTask);
+            final TimeTask t = mRealmHelper.addTimeTask(timeTask);
             TaskSubcategoryEfficiency subcategoryEfficiency = new TaskSubcategoryEfficiency(t, sc);
-            mRepository.addTaskSubcategoryEfficiency(subcategoryEfficiency);
+            mRealmHelper.addTaskSubcategoryEfficiency(subcategoryEfficiency);
         }
 
         return TasksFragment.newInstance();
