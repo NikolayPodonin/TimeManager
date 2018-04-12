@@ -25,7 +25,7 @@ public class TimeTask extends RealmObject{
     @Required
     private String mTaskId;
     private String mTaskBody;
-    private Date mStartDate;
+    private long mStartDate;
     private RealmList<TaskSubcategoryEfficiency> mSubcategoryEfficiencies;
 
     public TimeTask() {
@@ -48,11 +48,11 @@ public class TimeTask extends RealmObject{
         mTaskBody = taskBody;
     }
 
-    public Date getStartDate() {
+    public long getStartDate() {
         return mStartDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(long startDate) {
         mStartDate = startDate;
     }
 

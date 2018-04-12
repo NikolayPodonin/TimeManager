@@ -121,7 +121,12 @@ public class CalendarUtils {
 
     public static String toMonthString(Context context, long timeMillis) {
         return DateUtils.formatDateRange(context, timeMillis, timeMillis,
-                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY | DateUtils.FORMAT_NO_YEAR);
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY | DateUtils.FORMAT_SHOW_YEAR);
+    }
+
+    public static String toDateString(Context context, long dateMillis) {
+        return DateUtils.formatDateRange(context, dateMillis, dateMillis,
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
     }
 
     private static class DateOnlyCalendar extends GregorianCalendar{

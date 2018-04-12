@@ -1,7 +1,10 @@
 package android.podonin.com.timemanager;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.calendarwidget.EventCalendarView;
 import android.podonin.com.timemanager.databinding.FragmentTasksBinding;
 import android.podonin.com.timemanager.databinding.ListItemTaskBinding;
 import android.podonin.com.timemanager.model.TimeTask;
@@ -16,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,14 +44,52 @@ public class TasksFragment extends Fragment {
         mRepository = new Repository();
         mTimeTasks = mRepository.getAllTimeTasks();
 
-        FragmentTasksBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_tasks, container, false);
+        final FragmentTasksBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_tasks, container, false);
 
         binding.tasksRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         if(isAdded()){
             binding.tasksRecyclerView.setAdapter(new TasksAdapter(mTimeTasks));
         }
 
+        binding.calendarView.setOnChangeListener(new EventCalendarView.OnChangeListener() {
+            @Override
+            public void onSelectedDayChange(long dayMillis) {
+                // TODO: reset RecyclerView with selected day events
+                binding.toolbarToggle.setText(CalendarUtils.toMonthString(getActivity(), dayMillis));
+            }
+        });
+
+        binding.toolbarToggle.setText(CalendarUtils.toMonthString(getActivity(), CalendarUtils.today()));
+        binding.toolbarToggleFrame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.toolbarToggle.toggle();
+                if(binding.toolbarToggle.isChecked()){
+                    binding.calendarView.setVisibility(View.VISIBLE);
+                } else {
+                    binding.calendarView.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        binding.tasksActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startTaskEditActivity();
+            }
+        });
+
         return binding.getRoot();
+    }
+
+    private void startTaskEditActivity(){
+        TimeTask timeTask = mRepository.addTimeTask(new TimeTask());
+        startTaskEditActivity(timeTask.getTaskId());
+    }
+
+    private void startTaskEditActivity(String taskId){
+        Intent intent = TaskEditActivity.newIntent(getActivity(), taskId);
+        startActivity(intent);
     }
 
     private class TasksHolder extends RecyclerView.ViewHolder{
@@ -57,13 +99,19 @@ public class TasksFragment extends Fragment {
         public TasksHolder(@NonNull ListItemTaskBinding binding) {
             super(binding.getRoot());
             mItemTaskBinding = binding;
-            mItemTaskBinding.setTask(new TimeTaskViewModel());
+            mItemTaskBinding.setTask(new TimeTaskViewModel(getActivity()));
         }
 
 
         public void bind(TimeTask timeTask){
             mTimeTask = timeTask;
             mItemTaskBinding.getTask().setTimeTask(timeTask);
+            mItemTaskBinding.itemLinerLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startTaskEditActivity(mTimeTask.getTaskId());
+                }
+            });
             mItemTaskBinding.executePendingBindings();
         }
     }

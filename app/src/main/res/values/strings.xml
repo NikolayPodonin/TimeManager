@@ -4,4 +4,5 @@
     <string name="business">Дело</string>
     <string name="spirit">Душа</string>
     <string name="relationships">Отношения</string>
+    <string name="task_description">Task description:</string>
 </resources>

@@ -36,7 +36,7 @@ public class TasksActivity extends SingleFragmentActivity {
 
         for (Subcategory sc: mRepository.getAllSubcategories()) {
             TimeTask timeTask = new TimeTask();
-            timeTask.setStartDate(Calendar.getInstance().getTime());
+            timeTask.setStartDate(Calendar.getInstance().getTimeInMillis());
             timeTask.setTaskBody(sc.getName());
             final TimeTask t = mRepository.addTimeTask(timeTask);
             TaskSubcategoryEfficiency subcategoryEfficiency = new TaskSubcategoryEfficiency(t, sc);
