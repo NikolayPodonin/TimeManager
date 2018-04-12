@@ -42,6 +42,10 @@ public class Repository {
         return tt;
     }
 
+    public TimeTask getTimeTask(String taskId) {
+        return mRealm.where(TimeTask.class).equalTo(TimeTask.TASK_ID, taskId).findFirst();
+    }
+
     public TaskSubcategoryEfficiency addTaskSubcategoryEfficiency(TaskSubcategoryEfficiency subcategoryEfficiency) {
         mRealm.beginTransaction();
         TaskSubcategoryEfficiency tse = mRealm.copyToRealm(subcategoryEfficiency);
@@ -49,4 +53,5 @@ public class Repository {
         mRealm.commitTransaction();
         return tse;
     }
+
 }

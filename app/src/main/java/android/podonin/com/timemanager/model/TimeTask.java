@@ -16,7 +16,7 @@ import io.realm.annotations.Required;
  */
 
 public class TimeTask extends RealmObject{
-    private static final String TASK_ID = "mTaskId";
+    public static final String TASK_ID = "mTaskId";
     public static final String TASK_BODY_FIELD = "mTaskBody";
     public static final String START_DATE_FIELD = "mStartDate";
     public static final String SUBCATEGORY_EFFICIENCIES_FIELD = "mSubcategoryEfficiencies";

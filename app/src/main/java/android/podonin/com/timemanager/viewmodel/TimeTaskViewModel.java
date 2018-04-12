@@ -1,6 +1,7 @@
 package android.podonin.com.timemanager.viewmodel;
 
 import android.content.Context;
+import android.databinding.adapters.TextViewBindingAdapter;
 import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.repository.Repository;
@@ -10,7 +11,7 @@ import android.widget.DatePicker;
  * Created by Ybr on 17.03.2018.
  */
 
-public class TimeTaskViewModel {
+public class TimeTaskViewModel{
     private TimeTask mTimeTask;
     private Context mContext;
 
@@ -35,8 +36,7 @@ public class TimeTaskViewModel {
     }
 
     public String getTaskDate(){
-        String date = CalendarUtils.toDateString(mContext, mTimeTask.getStartDate());
-        return date;
+        return CalendarUtils.toDateString(mContext, mTimeTask.getStartDate());
     }
 
     public void setTaskDate(long taskDate){

@@ -13,7 +13,8 @@ public class TaskEditActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        return TaskEditFragment.newInstance();
+        String taskId = getIntent().getStringExtra(EXTRA_TASK_ID);
+        return TaskEditFragment.newInstance(taskId);
     }
 
     public static Intent newIntent(Context packageContext, String taskId) {

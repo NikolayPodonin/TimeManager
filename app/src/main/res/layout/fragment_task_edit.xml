@@ -44,6 +44,7 @@
         android:paddingEnd="@dimen/horizontal_padding"
         android:inputType="textShortMessage"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:text="@{taskViewModel.taskBody}"
         tools:ignore="LabelFor" />
 
     <TextView
