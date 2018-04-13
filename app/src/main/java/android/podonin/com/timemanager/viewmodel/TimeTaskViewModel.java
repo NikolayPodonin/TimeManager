@@ -4,7 +4,6 @@ import android.content.Context;
 import android.databinding.adapters.TextViewBindingAdapter;
 import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.TimeTask;
-import android.podonin.com.timemanager.repository.Repository;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.DatePicker;

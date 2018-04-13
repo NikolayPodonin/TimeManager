@@ -1,18 +1,14 @@
 package android.podonin.com.timemanager;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.databinding.adapters.TextViewBindingAdapter;
 import android.os.Bundle;
 import android.podonin.com.timemanager.databinding.FragmentTaskEditBinding;
 import android.podonin.com.timemanager.model.TimeTask;
-import android.podonin.com.timemanager.repository.Repository;
+import android.podonin.com.timemanager.repository.RealmHelper;
 import android.podonin.com.timemanager.viewmodel.TimeTaskViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +19,7 @@ public class TaskEditFragment extends Fragment {
 
     private TimeTask mTimeTask;
     private FragmentTaskEditBinding mTaskEditBinding;
-    private Repository mRepository;
+    private RealmHelper mRealmHelper;
 
     public static TaskEditFragment newInstance(String taskId){
         Bundle args = new Bundle();
@@ -39,9 +35,9 @@ public class TaskEditFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         String taskId = getArguments().getString(ARG_TASK_ID);
-        mRepository = new Repository();
+        mRealmHelper = new RealmHelper();
 
-        mTimeTask = mRepository.getTimeTask(taskId);
+        mTimeTask = mRealmHelper.getTimeTask(taskId);
     }
 
     @Nullable
@@ -59,7 +55,7 @@ public class TaskEditFragment extends Fragment {
 
     @Override
     public void onStop() {
-        mRepository.addTimeTask(mTaskEditBinding.getTaskViewModel().getTimeTask());
+        mRealmHelper.addTimeTask(mTaskEditBinding.getTaskViewModel().getTimeTask());
         super.onStop();
     }
 }

@@ -10,13 +10,14 @@ import java.util.List;
 import io.realm.Realm;
 
 /**
- * Created by Ybr on 15.03.2018.
+ *  @author Nic Podonin
  */
 
-public class Repository {
-    Realm mRealm;
+public class RealmHelper {
 
-    public Repository(){
+    private Realm mRealm;
+
+    public RealmHelper(){
         mRealm = Realm.getDefaultInstance();
     }
 
