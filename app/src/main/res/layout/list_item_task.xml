@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <data>
-        <variable
-            name="task"
-            type="android.podonin.com.timemanager.viewmodel.TimeTaskViewModel" />
-    </data>
 
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/item_liner_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -18,18 +12,17 @@
             android:id="@+id/task_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{task.taskBody}"/>
+            tools:text="TaskBody"/>
 
         <TextView
             android:id="@+id/task_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{task.taskDate}"/>
+            tools:text="TaskDate"/>
 
         <TextView
             android:id="@+id/efficiency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{task.taskSubcategoryEfficiency}"/>
+            tools:text="TaskSubcategoryEfficiency"/>
     </LinearLayout>
-</layout>

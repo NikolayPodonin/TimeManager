@@ -5,4 +5,5 @@
     <string name="spirit">Душа</string>
     <string name="relationships">Отношения</string>
     <string name="task_description">Task description:</string>
+    <string name="task_date">Task date:</string>
 </resources>

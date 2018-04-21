@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" >
-
-    <data>
-        <variable
-            name="taskViewModel"
-            type="android.podonin.com.timemanager.viewmodel.TimeTaskViewModel" />
-    </data>
-
-<LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -44,13 +37,12 @@
         android:paddingEnd="@dimen/horizontal_padding"
         android:inputType="textShortMessage"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:text="@{taskViewModel.taskBody}"
         tools:ignore="LabelFor" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Task date:"
+        android:text="@string/task_date"
         android:paddingTop="@dimen/vertical_padding"
         android:paddingStart="@dimen/horizontal_padding"
         android:paddingEnd="@dimen/horizontal_padding"/>
@@ -67,5 +59,3 @@
 
 
 </LinearLayout>
-
-</layout>

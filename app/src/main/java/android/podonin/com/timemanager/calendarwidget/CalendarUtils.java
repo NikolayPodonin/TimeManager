@@ -53,6 +53,16 @@ public class CalendarUtils {
         return result;
     }
 
+    public static long currentDay(long monthMillis) {
+        if(isNotTime(monthMillis)){
+            return NO_TIME_MILLIS;
+        }
+        DateOnlyCalendar calendar = DateOnlyCalendar.fromTime(monthMillis);
+        long result = calendar.getTimeInMillis();
+        calendar.recycle();
+        return result;
+    }
+
     public static int monthFirstDayOffset(long monthMillis) {
         if(isNotTime(monthMillis)){
             return 0;
