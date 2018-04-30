@@ -1,14 +1,12 @@
 package android.podonin.com.timemanager.view.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.podonin.com.timemanager.R;
-import android.podonin.com.timemanager.TaskEditActivity;
+import android.podonin.com.timemanager.navigation.FragmentNavigator;
 import android.podonin.com.timemanager.presenter.TasksFragmentPresenter;
 import android.podonin.com.timemanager.view.TasksFragmentView;
-import android.podonin.com.timemanager.view.adapter.RvTasksAdapter;
-import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.adapter.RvTasksAdapter;
 import android.podonin.com.timemanager.calendarwidget.EventCalendarView;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.repository.RealmHelper;
@@ -24,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.CheckedTextView;
 import android.widget.FrameLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,6 +39,7 @@ public class TasksFragment extends Fragment implements TasksFragmentView {
     private FloatingActionButton mTasksActionButton;
 
     private TasksFragmentPresenter mFragmentPresenter;
+    private FragmentNavigator mFragmentNavigator;
 
     public static TasksFragment newInstance(){
         return new TasksFragment();
@@ -66,6 +64,8 @@ public class TasksFragment extends Fragment implements TasksFragmentView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mFragmentNavigator = FragmentNavigator.getInstance();
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mTasksAdapter = new RvTasksAdapter();
         mRecyclerView.setAdapter(mTasksAdapter);
@@ -73,32 +73,44 @@ public class TasksFragment extends Fragment implements TasksFragmentView {
         mFragmentPresenter = new TasksFragmentPresenter(new RealmHelper());
         mFragmentPresenter.setTasksFragment(this);
         mFragmentPresenter.dispatchCreate();
+
+        mCalendarView.setOnChangeListener(new EventCalendarView.OnChangeListener() {
+            @Override
+            public void onSelectedDayChange(long dayMillis) {
+                mFragmentPresenter.onSelectedDayChanged(dayMillis);
+            }
+        });
+
+        mToolbarToggleFrame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFragmentPresenter.onToggleClicked();
+            }
+        });
+
+        mTasksActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFragmentPresenter.onButtonClicked();
+            }
+        });
+
+        mTasksAdapter.setOnItemClickListener(new RvTasksAdapter.OnClickListener() {
+            @Override
+            public void onClick(View v, String taskId) {
+                mFragmentPresenter.onItemClicked(taskId);
+            }
+        });
     }
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-
         mFragmentPresenter.dispatchDestroy();
+        super.onDestroyView();
     }
 
     public Context getFragmentContext(){
         return getActivity();
-    }
-
-
-
-    public void setOnButtonClickListener(View.OnClickListener listener){
-        mTasksActionButton.setOnClickListener(listener);
-    }
-
-    @Override
-    public void setOnItemClickListener(RvTasksAdapter.OnClickListener onItemClickListener) {
-        mTasksAdapter.setOnItemClickListener(onItemClickListener);
-    }
-
-    public void setOnToggleClickListener(View.OnClickListener listener){
-        mToolbarToggleFrame.setOnClickListener(listener);
     }
 
     public void toggleCalendar() {
@@ -118,14 +130,7 @@ public class TasksFragment extends Fragment implements TasksFragmentView {
         mTasksAdapter.setData(timeTasks);
     }
 
-    public void setCalendarOnChangeListener(EventCalendarView.OnChangeListener listener){
-        mCalendarView.setOnChangeListener(listener);
-    }
-
     public void goToTaskEditPage(String taskId){
-        Intent intent = TaskEditActivity.newIntent(getActivity(), taskId);
-        startActivity(intent);
+        mFragmentNavigator.showTaskEditFragment(taskId);
     }
-
-
 }

@@ -17,9 +17,6 @@ import android.widget.TextView;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class MonthView extends RecyclerView{
 
@@ -147,10 +144,10 @@ public class MonthView extends RecyclerView{
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             switch (viewType){
                 case VIEW_TYPE_HEADER:
-                    return new HeaderViewHolder(inflater.inflate(R.layout.grid_item_header, parent, false));
+                    return new HeaderViewHolder(inflater.inflate(R.layout.grid_calendar_header, parent, false));
                 case VIEW_TYPE_CONTENT:
                 default:
-                    return new ContentViewHolder(inflater.inflate(R.layout.grid_item_content, parent, false));
+                    return new ContentViewHolder(inflater.inflate(R.layout.grid_calendar_content, parent, false));
             }
         }
 

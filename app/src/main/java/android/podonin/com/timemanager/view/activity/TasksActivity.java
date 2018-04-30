@@ -2,7 +2,7 @@ package android.podonin.com.timemanager.view.activity;
 
 import android.os.Bundle;
 import android.podonin.com.timemanager.R;
-import android.podonin.com.timemanager.navigation.FrNavigator;
+import android.podonin.com.timemanager.navigation.FragmentNavigator;
 import android.podonin.com.timemanager.presenter.TasksActivityPresenter;
 import android.podonin.com.timemanager.view.TasksActivityView;
 import android.support.v7.app.AppCompatActivity;
@@ -13,15 +13,15 @@ import android.support.v7.app.AppCompatActivity;
 
 public class TasksActivity extends AppCompatActivity implements TasksActivityView {
 
-    FrNavigator mFragmentNavigator;
+    FragmentNavigator mFragmentNavigator;
     TasksActivityPresenter mLayoutPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragment);
+        setContentView(R.layout.activity_container);
 
-        mFragmentNavigator = new FrNavigator(this);
+        mFragmentNavigator = FragmentNavigator.initializeInstance(this);
         mLayoutPresenter = new TasksActivityPresenter(this);
         mLayoutPresenter.dispatchCreate();
     }

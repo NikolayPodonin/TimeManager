@@ -37,7 +37,7 @@ public class EventCalendarView extends ViewPager {
 
     public EventCalendarView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(CalendarUtils.today());
     }
 
     @Override
@@ -52,8 +52,8 @@ public class EventCalendarView extends ViewPager {
         }
     }
 
-    private void init() {
-        mPagerAdapter = new MonthViewPagerAdapter(mDateChangeListener);
+    private void init(long dayMillis) {
+        mPagerAdapter = new MonthViewPagerAdapter(dayMillis, mDateChangeListener);
         setAdapter(mPagerAdapter);
         setCurrentItem(mPagerAdapter.getCount() / 2);
         addOnPageChangeListener(new SimpleOnPageChangeListener(){
@@ -90,7 +90,6 @@ public class EventCalendarView extends ViewPager {
                 CalendarUtils.monthFirstDay(mPagerAdapter.getMonth(position)), true);
     }
 
-
     private void notifyDayChange(long dayMillis) {
         if (mListener != null){
             mListener.onSelectedDayChange(dayMillis);
@@ -114,5 +113,9 @@ public class EventCalendarView extends ViewPager {
                 mPagerAdapter.bind(position + 1);
             }
         }
+    }
+
+    public void setSelectedDay(long dayMillis){
+        init(dayMillis);
     }
 }

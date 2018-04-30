@@ -1,6 +1,7 @@
-package android.podonin.com.timemanager;
+package android.podonin.com.timemanager.view.fragment;
 
 import android.os.Bundle;
+import android.podonin.com.timemanager.R;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.repository.RealmHelper;
 import android.support.annotation.NonNull;

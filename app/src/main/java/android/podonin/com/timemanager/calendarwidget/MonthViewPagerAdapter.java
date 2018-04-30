@@ -24,12 +24,11 @@ class MonthViewPagerAdapter extends PagerAdapter{
     final List<MonthView> mViews = new ArrayList<>(getCount());
     private long mSelectedDayMillis = CalendarUtils.today();
 
-    public MonthViewPagerAdapter(MonthView.OnDateChangeListener listener) {
+    public MonthViewPagerAdapter(long dayMillis, MonthView.OnDateChangeListener listener) {
         mListener = listener;
         int mid = ITEM_COUNT / 2;
-        long todayMillis = CalendarUtils.monthFirstDay(CalendarUtils.today());
         for (int i = 0; i < getCount(); i++){
-            mMonths.add(CalendarUtils.addMonths(todayMillis, i - mid));
+            mMonths.add(CalendarUtils.addMonths(dayMillis, i - mid));
             mViews.add(null);
         }
     }

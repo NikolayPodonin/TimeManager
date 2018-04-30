@@ -1,11 +1,9 @@
-package android.podonin.com.timemanager.view.adapter;
+package android.podonin.com.timemanager.adapter;
 
 import android.content.Context;
 import android.podonin.com.timemanager.R;
 import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.TimeTask;
-import android.podonin.com.timemanager.presenter.TasksFragmentPresenter;
-import android.podonin.com.timemanager.view.ItemTaskView;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -54,8 +52,8 @@ public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHol
     }
 
 
-    class TasksHolder extends RecyclerView.ViewHolder implements ItemTaskView{
-        private TasksFragmentPresenter.ItemTaskPresenter mTaskPresenter;
+    class TasksHolder extends RecyclerView.ViewHolder {
+        private TimeTask mTimeTask;
         private TextView mBodyView;
         private TextView mDateView;
         private TextView mEfficiencyView;
@@ -70,31 +68,18 @@ public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHol
         }
 
         public void bind(final TimeTask timeTask){
-            mTaskPresenter = new TasksFragmentPresenter.ItemTaskPresenter(timeTask);
-            mTaskPresenter.setItemTaskView(this);
-            mTaskPresenter.dispatchCreate();
-        }
-
-        public void setOnItemClickListener(final View.OnClickListener listener) {
-            mItemLayout.setOnClickListener(listener);
-        }
-
-        public void callAdapterClickListener(View v, String taskId){
-            if (mOnItemClickListener != null) {
-                mOnItemClickListener.onClick(v, taskId);
-            }
-        }
-
-        public void setBody(String body) {
-            mBodyView.setText(body);
-        }
-
-        public void setDate(String date) {
-            mDateView.setText(date);
-        }
-
-        public void setEfficiency(String efficiency) {
-            mEfficiencyView.setText(efficiency);
+            mTimeTask = timeTask;
+            mItemLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onClick(v, mTimeTask.getTaskId());
+                    }
+                }
+            });
+            mBodyView.setText(mTimeTask.getTaskBody());
+            mDateView.setText(CalendarUtils.toDateString(getContext(), mTimeTask.getStartDate()));
+            mEfficiencyView.setText(mTimeTask.getSubcategoryEfficiencies().first().getEfficiency().toString());
         }
 
         public Context getContext() {
