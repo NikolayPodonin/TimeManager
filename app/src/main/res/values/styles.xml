@@ -7,6 +7,8 @@
         <item name="colorPrimaryDark">@color/blue700</item>
         <item name="colorAccent">@color/greenA700</item>
         <item name="alertDialogTheme">@style/Theme.AppTheme.Dialog.Alert</item>
+        <item name="android:imageButtonStyle">@style/Base.Widget.AppCompat.Button.Borderless</item>
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Colored</item>
     </style>
 
     <style name="Theme.AppTheme.Dialog.Alert" parent="Theme.AppCompat.Light.Dialog.Alert">

@@ -6,4 +6,6 @@
     <string name="relationships">Отношения</string>
     <string name="task_description">Task description:</string>
     <string name="task_date">Task date:</string>
+    <string name="ok">OK</string>
+    <string name="back">Back</string>
 </resources>

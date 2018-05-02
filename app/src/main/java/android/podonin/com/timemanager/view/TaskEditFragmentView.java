@@ -1,5 +1,5 @@
 package android.podonin.com.timemanager.view;
 
-public interface TaskEditView {
+public interface TaskEditFragmentView {
 
 }
