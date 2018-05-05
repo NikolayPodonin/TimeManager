@@ -9,4 +9,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="image_button_horizontal_padding">30dp</dimen>
     <dimen name="image_button_vertical_padding">10dp</dimen>
+    <dimen name="divider_vertical_margin">8dp</dimen>
+    <dimen name="subcategory_efficiency_margin">5dp</dimen>
 </resources>
