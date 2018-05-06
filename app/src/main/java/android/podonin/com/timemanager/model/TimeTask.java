@@ -27,6 +27,7 @@ public class TimeTask extends RealmObject{
     private String mTaskBody;
     private long mStartDate;
     private RealmList<TaskSubcategoryEfficiency> mSubcategoryEfficiencies;
+    private boolean mDone;
 
     public TimeTask() {
         mTaskId = UUID.randomUUID().toString();
@@ -54,6 +55,15 @@ public class TimeTask extends RealmObject{
 
     public void setStartDate(long startDate) {
         mStartDate = startDate;
+    }
+
+
+    public boolean isDone() {
+        return mDone;
+    }
+
+    public void setDone(boolean done) {
+        mDone = done;
     }
 
     public RealmList<TaskSubcategoryEfficiency> getSubcategoryEfficiencies() {

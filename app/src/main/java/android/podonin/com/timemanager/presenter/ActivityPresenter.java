@@ -5,17 +5,17 @@ import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.repository.RealmHelper;
-import android.podonin.com.timemanager.view.TasksActivityView;
+import android.podonin.com.timemanager.view.ActivityView;
 import android.support.annotation.NonNull;
 
 import java.util.Calendar;
 
-public class TasksActivityPresenter {
+public class ActivityPresenter {
 
     @NonNull
-    private TasksActivityView mLayoutView;
+    private ActivityView mLayoutView;
 
-    public TasksActivityPresenter(@NonNull TasksActivityView view){
+    public ActivityPresenter(@NonNull ActivityView view){
         mLayoutView = view;
     }
 
