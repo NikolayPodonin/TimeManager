@@ -32,7 +32,7 @@ public class ActivityPresenter {
             for(Integer i = 0; i < 4; i++){
                 Subcategory sc = new Subcategory();
                 sc.setCategory(cat);
-                sc.setName(i.toString());
+                sc.setName(i.toString() + "_" + cat.name());
                 mRealmHelper.addSubcategory(sc);
             }
         }

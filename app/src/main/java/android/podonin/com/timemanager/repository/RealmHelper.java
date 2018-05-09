@@ -62,4 +62,8 @@ public class RealmHelper {
         long currentDay = CalendarUtils.currentDay(dayMillis);
         return mRealm.where(TimeTask.class).equalTo(TimeTask.START_DATE_FIELD, currentDay).findAll();
     }
+
+    public List<Subcategory> getSubcategories(Category category) {
+        return mRealm.where(Subcategory.class).equalTo(Subcategory.CATEGORY_FIELD, category.toString()).findAll();
+    }
 }
