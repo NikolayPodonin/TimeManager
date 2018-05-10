@@ -1,9 +1,9 @@
 package android.podonin.com.timemanager.adapter;
 
 import android.podonin.com.timemanager.R;
+import android.podonin.com.timemanager.model.Efficiency;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
-import android.podonin.com.timemanager.model.TimeTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,13 +19,32 @@ import java.util.List;
 
 public class RvSubcategoryAdapter extends RecyclerView.Adapter<RvSubcategoryAdapter.SubcategoriesHolder> {
 
-    List<Subcategory> mSubcategories = new ArrayList<>();
-    TimeTask mTimeTask;
+    public interface OnSaveChangesListener{
+        void onSaveChanges(List<TaskSubcategoryEfficiency> changed, List<TaskSubcategoryEfficiency> deleted);
+    }
 
-    public void setData(List<Subcategory> subcategories, TimeTask timeTask) {
+    private List<Subcategory> mSubcategories = new ArrayList<>();
+
+    private OnSaveChangesListener mOnSaveChangesListener;
+    //TODO заполнить массивы по мере изменения состояний view holder'ов
+    private List<TaskSubcategoryEfficiency> mOldTseList = new ArrayList<>();
+    private List<TaskSubcategoryEfficiency> mChangedTseList = new ArrayList<>();
+    private List<TaskSubcategoryEfficiency> mDeletedTseList = new ArrayList<>();
+
+
+    public void setOnSaveChangesListener(OnSaveChangesListener onSaveChangesListener) {
+        mOnSaveChangesListener = onSaveChangesListener;
+    }
+
+    public void saveChanges(){
+        mOnSaveChangesListener.onSaveChanges(mChangedTseList, mDeletedTseList);
+    }
+
+    public void setData(List<Subcategory> subcategories, List<TaskSubcategoryEfficiency> efficiencies) {
         mSubcategories.clear();
         mSubcategories.addAll(subcategories);
-        mTimeTask = timeTask;
+        mOldTseList.clear();
+        mOldTseList.addAll(efficiencies);
         notifyDataSetChanged();
     }
 
@@ -39,7 +58,25 @@ public class RvSubcategoryAdapter extends RecyclerView.Adapter<RvSubcategoryAdap
 
     @Override
     public void onBindViewHolder(@NonNull SubcategoriesHolder holder, int position) {
-        holder.bind(mSubcategories.get(position));
+        TaskSubcategoryEfficiency efficiency = null;
+        for (TaskSubcategoryEfficiency ef : mChangedTseList) {
+            if (mSubcategories.get(position).getSubcategoryId().equals(ef.getSubcategory().getSubcategoryId())){
+                efficiency = ef;
+                break;
+            }
+        }
+        if (efficiency == null){
+            for (TaskSubcategoryEfficiency ef : mOldTseList) {
+                if (mSubcategories.get(position).getSubcategoryId().equals(ef.getSubcategory().getSubcategoryId())){
+                    efficiency = ef;
+                    break;
+                }
+            }
+        }
+        if (efficiency != null && mDeletedTseList.contains(efficiency)){
+            efficiency = null;
+        }
+        holder.bind(mSubcategories.get(position), efficiency);
     }
 
     @Override
@@ -49,42 +86,79 @@ public class RvSubcategoryAdapter extends RecyclerView.Adapter<RvSubcategoryAdap
 
     class SubcategoriesHolder extends RecyclerView.ViewHolder{
         TextView mSubcategoryName;
-        SeekBar mEfficiency;
+        SeekBar mEfficiencySeekBar;
         CheckBox mIsAddedToTask;
         Subcategory mSubcategory;
+        TaskSubcategoryEfficiency mEfficiency;
 
         SubcategoriesHolder(View itemView) {
             super(itemView);
             mSubcategoryName = itemView.findViewById(R.id.subcategory_name_text_view);
-            mEfficiency = itemView.findViewById(R.id.efficiency_seek_bar);
+            mEfficiencySeekBar = itemView.findViewById(R.id.efficiency_seek_bar);
             mIsAddedToTask = itemView.findViewById(R.id.is_added_check_box);
         }
 
-        void bind(Subcategory subcategory){
-            mEfficiency.setVisibility(View.GONE);
+        void bind(Subcategory subcategory, TaskSubcategoryEfficiency efficiency){
+            mSubcategory = subcategory;
+            mSubcategoryName.setText(mSubcategory.getName());
+
+            mEfficiency = efficiency;
+            mEfficiencySeekBar.setVisibility(View.GONE);
 
             mIsAddedToTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
-                        mEfficiency.setVisibility(View.VISIBLE);
-                    } else {
-                        mEfficiency.setVisibility(View.GONE);
-                    }
+                    onIsAddedCheckChange(isChecked);
                 }
             });
 
-            for (TaskSubcategoryEfficiency efficiency: mTimeTask.getSubcategoryEfficiencies()) {
-                if(efficiency.getSubcategory().getSubcategoryId().equals(subcategory.getSubcategoryId())){
-                    mIsAddedToTask.setChecked(true);
-                    mEfficiency.incrementProgressBy(efficiency.getEfficiency().ordinal());
+            mEfficiencySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (fromUser){
+                        if (!mChangedTseList.contains(mEfficiency)){
+                            mChangedTseList.add(mEfficiency);
+                        }
+                        mEfficiency.setEfficiency(Efficiency.getEfficiency(progress));
+                    }
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) { }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) { }
+            });
+
+            if(efficiency != null){
+                mIsAddedToTask.setChecked(true);
+                mEfficiencySeekBar.setVisibility(View.VISIBLE);
+            } else {
+                mIsAddedToTask.setChecked(false);
+            }
+        }
+
+        private void onIsAddedCheckChange(boolean isChecked){
+            if(isChecked){
+                if(mEfficiency == null){
+                    mEfficiency = new TaskSubcategoryEfficiency();
+                    mEfficiency.setSubcategory(mSubcategory);
+                    mChangedTseList.add(mEfficiency);
                 } else {
-                    mIsAddedToTask.setChecked(false);
+                    mEfficiencySeekBar.setProgress(mEfficiency.getEfficiency().ordinal());
+                    if (mDeletedTseList.contains(mEfficiency)){
+                        mDeletedTseList.remove(mEfficiency);
+                    }
+                }
+                mEfficiencySeekBar.setVisibility(View.VISIBLE);
+            } else {
+                mEfficiencySeekBar.setVisibility(View.GONE);
+                if (mOldTseList.contains(mEfficiency)){
+                    if (!mDeletedTseList.contains(mEfficiency)){
+                        mDeletedTseList.add(mEfficiency);
+                    }
                 }
             }
-
-            mSubcategory = subcategory;
-            mSubcategoryName.setText(mSubcategory.getName());
         }
     }
 }

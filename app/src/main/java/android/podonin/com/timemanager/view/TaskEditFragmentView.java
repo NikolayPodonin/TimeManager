@@ -2,6 +2,7 @@ package android.podonin.com.timemanager.view;
 
 import android.content.Context;
 import android.podonin.com.timemanager.model.Subcategory;
+import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 public interface TaskEditFragmentView {
     void setSubcategoriesVisibility(boolean visibility);
 
-    void setSubcategories(List<Subcategory> subcategories, TimeTask timeTask);
+    void showSubcategories(List<Subcategory> subcategories, List<TaskSubcategoryEfficiency> efficiencies);
 
     void showTaskBody(String taskBody);
 
@@ -18,4 +19,6 @@ public interface TaskEditFragmentView {
     void setDone(boolean isDone);
 
     Context getFragmentContext();
+
+    void saveChanges();
 }

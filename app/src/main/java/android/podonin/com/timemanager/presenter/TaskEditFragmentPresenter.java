@@ -3,6 +3,7 @@ package android.podonin.com.timemanager.presenter;
 import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
+import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.repository.RealmHelper;
 import android.podonin.com.timemanager.view.TaskEditFragmentView;
@@ -35,14 +36,17 @@ public class TaskEditFragmentPresenter {
         mFragmentView = null;
     }
 
-    public void onCategoryClick(Category category){
+    public void onCategoryChoose(Category category){
         if(category == null){
             mFragmentView.setSubcategoriesVisibility(false);
         } else {
             mFragmentView.setSubcategoriesVisibility(true);
             List<Subcategory> subcategories = mRealmHelper.getSubcategories(category);
-            mFragmentView.setSubcategories(subcategories, mTimeTask);
+            mFragmentView.showSubcategories(subcategories, mTimeTask.getSubcategoryEfficiencies());
         }
     }
 
+    public void onSaveTaskSubcategoryEfficiencies(List<TaskSubcategoryEfficiency> changed, List<TaskSubcategoryEfficiency> deleted) {
+        //TODO сохранить или удалить из БД объекты всех массивов
+    }
 }

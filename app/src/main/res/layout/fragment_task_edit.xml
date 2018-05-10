@@ -66,12 +66,13 @@
         android:layout_marginTop="@dimen/divider_vertical_margin"
         android:background="@color/colorDivider"/>
 
-    <android.support.v7.widget.RecyclerView
+    <android.podonin.com.timemanager.measuredrecyclerviewvidget.MeasuredRecyclerView
         android:id="@+id/subcategories_efficiency_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
 
-    </android.support.v7.widget.RecyclerView>
+    </android.podonin.com.timemanager.measuredrecyclerviewvidget.MeasuredRecyclerView>
 
     <View
         android:id="@+id/horizontal_divider_2"

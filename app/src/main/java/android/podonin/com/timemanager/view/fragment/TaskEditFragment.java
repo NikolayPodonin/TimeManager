@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.podonin.com.timemanager.R;
 import android.podonin.com.timemanager.adapter.RvSubcategoryAdapter;
 import android.podonin.com.timemanager.adapter.categoriesadapter.RvCategoriesAdapter;
+import android.podonin.com.timemanager.measuredrecyclerviewvidget.MeasuredRecyclerView;
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
@@ -36,7 +37,7 @@ public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
     private EditText mTaskBody;
     private TextView mDate;
     private CheckBox mDone;
-    private RecyclerView mSubcategoriesRecyclerView;
+    private MeasuredRecyclerView mSubcategoriesRecyclerView;
     private RecyclerView mCategoriesRecyclerView;
     private RvSubcategoryAdapter mRvSubcategoryAdapter;
 
@@ -82,13 +83,19 @@ public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
         categoriesAdapter.setOnCategoryClickListener(new RvCategoriesAdapter.OnCategoryClickListener() {
             @Override
             public void onClick(Category category) {
-                mPresenter.onCategoryClick(category);
+                mPresenter.onCategoryChoose(category);
             }
         });
         mCategoriesRecyclerView.setAdapter(categoriesAdapter);
 
         mSubcategoriesRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRvSubcategoryAdapter = new RvSubcategoryAdapter();
+        mRvSubcategoryAdapter.setOnSaveChangesListener(new RvSubcategoryAdapter.OnSaveChangesListener() {
+            @Override
+            public void onSaveChanges(List<TaskSubcategoryEfficiency> changed, List<TaskSubcategoryEfficiency> deleted) {
+                mPresenter.onSaveTaskSubcategoryEfficiencies(changed, deleted);
+            }
+        });
         mSubcategoriesRecyclerView.setAdapter(mRvSubcategoryAdapter);
 
         mNavigator = FragmentNavigator.getInstance();
@@ -112,6 +119,11 @@ public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
     }
 
     @Override
+    public void saveChanges() {
+        mRvSubcategoryAdapter.saveChanges();
+    }
+
+    @Override
     public void setSubcategoriesVisibility(boolean visibility) {
         if (visibility) {
             mSubcategoriesRecyclerView.setVisibility(View.VISIBLE);
@@ -121,8 +133,8 @@ public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
     }
 
     @Override
-    public void setSubcategories(List<Subcategory> subcategories, TimeTask timeTask){
-        mRvSubcategoryAdapter.setData(subcategories, timeTask);
+    public void showSubcategories(List<Subcategory> subcategories, List<TaskSubcategoryEfficiency> efficiencies){
+        mRvSubcategoryAdapter.setData(subcategories, efficiencies);
     }
 
     @Override

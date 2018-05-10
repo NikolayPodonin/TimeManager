@@ -25,6 +25,7 @@ public class TaskSubcategoryEfficiency extends RealmObject {
 
     public TaskSubcategoryEfficiency(){
         mTaskSubEfficiencyId = UUID.randomUUID().toString();
+        mEfficiency = Efficiency.zero.toString();
     }
 
     public TaskSubcategoryEfficiency(TimeTask timeTask, Subcategory subcategory) {
