@@ -11,7 +11,7 @@ import io.realm.annotations.Required;
  */
 
 public class TaskSubcategoryEfficiency extends RealmObject {
-    private static final String TASK_SUB_EFFICIENCY_ID = "mTaskSubEfficiencyId";
+    public static final String TASK_SUB_EFFICIENCY_ID = "mTaskSubEfficiencyId";
     public static final String TASK_FIELD = "mTimeTask";
     public static final String SUBCATEGORY_FIELD = "mSubcategory";
     public static final String EFFICIENCIES_FIELD = "mEfficiency";

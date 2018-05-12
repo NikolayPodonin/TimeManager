@@ -36,17 +36,34 @@ public class TaskEditFragmentPresenter {
         mFragmentView = null;
     }
 
-    public void onCategoryChoose(Category category){
+    public void onCategoryChoose(Category category, boolean isCashEmpty){
         if(category == null){
             mFragmentView.setSubcategoriesVisibility(false);
+        } else if(isCashEmpty) {
+            mFragmentView.setSubcategoriesVisibility(true);
+            List<Subcategory> subcategories = mRealmHelper.getSubcategoriesFromCategory(category);
+            mFragmentView.showSubcategories(subcategories, mTimeTask.getSubcategoryEfficiencies());
         } else {
             mFragmentView.setSubcategoriesVisibility(true);
-            List<Subcategory> subcategories = mRealmHelper.getSubcategories(category);
-            mFragmentView.showSubcategories(subcategories, mTimeTask.getSubcategoryEfficiencies());
+            mFragmentView.showSubcategoriesFromCash(category);
         }
     }
 
-    public void onSaveTaskSubcategoryEfficiencies(List<TaskSubcategoryEfficiency> changed, List<TaskSubcategoryEfficiency> deleted) {
+    public void onSaveTaskSubcategoryEfficiencies(List<TaskSubcategoryEfficiency> changed, List<TaskSubcategoryEfficiency> deleted, List<TaskSubcategoryEfficiency> added) {
         //TODO сохранить или удалить из БД объекты всех массивов
+        for (TaskSubcategoryEfficiency ch : changed) {
+            mRealmHelper.changeTaskSubcategoryEfficiency(ch);
+        }
+        for (TaskSubcategoryEfficiency de : deleted) {
+            mRealmHelper.deleteTaskSubcategoryEfficiency(de);
+        }
+        for (TaskSubcategoryEfficiency ne : added) {
+            ne.setTimeTask(mTimeTask);
+            mRealmHelper.addTaskSubcategoryEfficiency(ne);
+        }
+    }
+
+    public void onSaveExit() {
+        mFragmentView.saveChanges();
     }
 }

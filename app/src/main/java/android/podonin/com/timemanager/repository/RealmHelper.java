@@ -6,10 +6,16 @@ import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmModel;
+import io.realm.RealmObject;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 /**
  *  @author Nic Podonin
@@ -24,7 +30,12 @@ public class RealmHelper {
     }
 
     public List<Subcategory> getAllSubcategories(){
-        return mRealm.where(Subcategory.class).findAll();
+        RealmResults<Subcategory> results = mRealm.where(Subcategory.class).findAll();
+        return results;
+    }
+
+    public List<Subcategory> getSubcategoriesFromCategory(Category category) {
+        return mRealm.where(Subcategory.class).equalTo(Subcategory.CATEGORY_FIELD, category.toString()).findAll();
     }
 
     public Subcategory addSubcategory(Subcategory subcategory){
@@ -63,7 +74,19 @@ public class RealmHelper {
         return mRealm.where(TimeTask.class).equalTo(TimeTask.START_DATE_FIELD, currentDay).findAll();
     }
 
-    public List<Subcategory> getSubcategories(Category category) {
-        return mRealm.where(Subcategory.class).equalTo(Subcategory.CATEGORY_FIELD, category.toString()).findAll();
+    public TaskSubcategoryEfficiency changeTaskSubcategoryEfficiency(TaskSubcategoryEfficiency changedTse) {
+        mRealm.beginTransaction();
+        TaskSubcategoryEfficiency tse = mRealm.copyToRealm(changedTse);
+        mRealm.commitTransaction();
+        return tse;
+    }
+
+    public void deleteTaskSubcategoryEfficiency(TaskSubcategoryEfficiency deletedTse) {
+        mRealm.beginTransaction();
+        RealmResults<TaskSubcategoryEfficiency> query = mRealm.where(TaskSubcategoryEfficiency.class)
+                .equalTo(TaskSubcategoryEfficiency.TASK_SUB_EFFICIENCY_ID, deletedTse.getTaskSubEfficiencyId()).findAll();
+        deletedTse.getTimeTask().getSubcategoryEfficiencies().remove(deletedTse);
+        query.deleteAllFromRealm();
+        mRealm.commitTransaction();
     }
 }
