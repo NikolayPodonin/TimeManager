@@ -11,7 +11,7 @@ import android.support.v7.app.AppCompatActivity;
  * Created by Ybr on 16.03.2018.
  */
 
-public class Activity extends AppCompatActivity implements ActivityView {
+public class ContainerActivity extends AppCompatActivity implements ActivityView {
 
     FragmentNavigator mFragmentNavigator;
     ActivityPresenter mLayoutPresenter;
@@ -21,7 +21,7 @@ public class Activity extends AppCompatActivity implements ActivityView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_container);
 
-        mFragmentNavigator = FragmentNavigator.initializeInstance(this);
+        mFragmentNavigator = FragmentNavigator.getInstance(this);
         mLayoutPresenter = new ActivityPresenter(this);
         mLayoutPresenter.dispatchCreate();
     }

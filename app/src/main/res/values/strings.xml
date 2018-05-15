@@ -9,4 +9,9 @@
     <string name="ok">OK</string>
     <string name="back">Back</string>
     <string name="category">Категория</string>
+    <string name="yes">Да</string>
+    <string name="cancel">Отмена</string>
+    <string name="want_you_save_changes">Сохранить изменения?</string>
+    <string name="changes_saved">Изменения сохранены</string>
+    <string name="empty_body_message">Заполните тело задачи</string>
 </resources>

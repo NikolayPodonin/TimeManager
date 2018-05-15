@@ -1,10 +1,11 @@
 package android.podonin.com.timemanager.view.fragment;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.podonin.com.timemanager.R;
 import android.podonin.com.timemanager.adapter.subcategoriesadapter.RvSubcategoryAdapter;
 import android.podonin.com.timemanager.adapter.categoriesadapter.RvCategoriesAdapter;
+import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.measuredrecyclerviewvidget.MeasuredRecyclerView;
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
@@ -16,6 +17,7 @@ import android.podonin.com.timemanager.view.TaskEditFragmentView;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,10 +28,13 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
+import java.util.Objects;
 
-public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
+public class TaskEditFragment extends Fragment
+        implements TaskEditFragmentView {
 
     private static final String ARG_TASK_ID = "task_id";
 
@@ -84,7 +89,7 @@ public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
         mRvSubcategoryAdapter = new RvSubcategoryAdapter();
         mRvSubcategoryAdapter.setOnSaveChangesListener(new RvSubcategoryAdapter.OnSaveChangesListener() {
             @Override
-            public void onSaveChanges(List<TaskSubcategoryEfficiency> changed, List<TaskSubcategoryEfficiency> deleted, List<TaskSubcategoryEfficiency> added) {
+            public void onSaveChanges(@NonNull List<TaskSubcategoryEfficiency> changed, @NonNull List<TaskSubcategoryEfficiency> deleted, @NonNull List<TaskSubcategoryEfficiency> added) {
                 mPresenter.onSaveTaskSubcategoryEfficiencies(changed, deleted, added);
             }
         });
@@ -94,10 +99,9 @@ public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
         RvCategoriesAdapter categoriesAdapter = new RvCategoriesAdapter();
         categoriesAdapter.setOnCategoryClickListener(new RvCategoriesAdapter.OnCategoryClickListener() {
             @Override
-            public void onClick(Category category) {
+            public void onClick(@Nullable Category category) {
                 boolean isCashEmpty = mRvSubcategoryAdapter.isCategoryCashEmpty(category);
                 mPresenter.onCategoryChoose(category, isCashEmpty);
-
             }
         });
         mCategoriesRecyclerView.setAdapter(categoriesAdapter);
@@ -105,13 +109,21 @@ public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.onSaveExit();
+                mPresenter.onSaveTask(mTaskBody.getText().toString(), CalendarUtils.toDateLong(mDate.getText().toString()), mDone.isChecked());
+                mPresenter.onExit(true);
             }
         });
 
-        mNavigator = FragmentNavigator.getInstance();
+        mNavigator = FragmentNavigator.getInstance((AppCompatActivity) Objects.requireNonNull(getActivity()));
 
-        String taskId = getArguments().getString(ARG_TASK_ID);
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.onExit(false);
+            }
+        });
+
+        String taskId = Objects.requireNonNull(getArguments()).getString(ARG_TASK_ID);
         mPresenter = new TaskEditFragmentPresenter(taskId, new RealmHelper());
         mPresenter.setFragmentView(this);
         mPresenter.dispatchCreate();
@@ -129,8 +141,20 @@ public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
     }
 
     @Override
+    public void exit() {
+        mNavigator.backToPreviousFragment();
+    }
+
+    @SuppressLint("ShowToast")
+    @Override
+    public void showEmptyBodyMessage() {
+        Toast.makeText(getActivity(), R.string.empty_body_message, Toast.LENGTH_SHORT);
+    }
+
+    @Override
     public void saveChanges() {
         mRvSubcategoryAdapter.saveChanges();
+        Toast.makeText(getActivity(), R.string.changes_saved, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -145,7 +169,7 @@ public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
     }
 
     @Override
-    public void showSubcategories(List<Subcategory> subcategories, List<TaskSubcategoryEfficiency> efficiencies){
+    public void showSubcategories(@NonNull List<Subcategory> subcategories, @NonNull List<TaskSubcategoryEfficiency> efficiencies){
         mRvSubcategoryAdapter.setData(subcategories, efficiencies);
     }
 
@@ -160,17 +184,12 @@ public class TaskEditFragment extends Fragment implements TaskEditFragmentView {
     }
 
     @Override
-    public void showTaskDate(String taskDate) {
-        mDate.setText(taskDate);
+    public void showTaskDate(long taskDate) {
+        mDate.setText(CalendarUtils.toDateString(getActivity(), taskDate));
     }
 
     @Override
     public void setDone(boolean isDone) {
         mDone.setChecked(isDone);
-    }
-
-    @Override
-    public Context getFragmentContext() {
-        return getActivity();
     }
 }

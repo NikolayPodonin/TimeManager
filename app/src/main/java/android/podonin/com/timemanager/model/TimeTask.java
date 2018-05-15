@@ -57,7 +57,6 @@ public class TimeTask extends RealmObject{
         mStartDate = startDate;
     }
 
-
     public boolean isDone() {
         return mDone;
     }

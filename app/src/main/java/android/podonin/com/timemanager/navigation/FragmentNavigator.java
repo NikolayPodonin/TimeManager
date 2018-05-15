@@ -22,16 +22,9 @@ public class FragmentNavigator {
 
     private FragmentNavigator(){}
 
-    public static FragmentNavigator initializeInstance(@NonNull AppCompatActivity activity){
+    public static FragmentNavigator getInstance(@NonNull AppCompatActivity activity){
         if (sNavigator == null) {
             sNavigator = new FragmentNavigator(activity);
-        }
-        return sNavigator;
-    }
-
-    public static FragmentNavigator getInstance(){
-        if (sNavigator == null){
-            throw new NullPointerException("Not Initialized Activity");
         }
         return sNavigator;
     }
@@ -60,7 +53,14 @@ public class FragmentNavigator {
             return;
         }
         fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment, tag).commit();
+                .replace(R.id.fragment_container, fragment, tag)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void backToPreviousFragment(){
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.popBackStack();
     }
 
     public void showTasksFragment(){

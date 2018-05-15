@@ -15,13 +15,15 @@ public interface TaskEditFragmentView {
 
     void showTaskBody(String taskBody);
 
-    void showTaskDate(String taskDate);
+    void showTaskDate(long taskDate);
 
     void setDone(boolean isDone);
-
-    Context getFragmentContext();
 
     void saveChanges();
 
     void showSubcategoriesFromCash(Category category);
+
+    void exit();
+
+    void showEmptyBodyMessage();
 }

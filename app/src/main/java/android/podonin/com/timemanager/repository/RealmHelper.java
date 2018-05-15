@@ -61,6 +61,13 @@ public class RealmHelper {
         return mRealm.where(TimeTask.class).equalTo(TimeTask.TASK_ID, taskId).findFirst();
     }
 
+    public void deleteTimeTask(String taskId) {
+        mRealm.beginTransaction();
+        RealmResults<TimeTask> results = mRealm.where(TimeTask.class).equalTo(TimeTask.TASK_ID, taskId).findAll();
+        results.deleteAllFromRealm();
+        mRealm.commitTransaction();
+    }
+
     public TaskSubcategoryEfficiency addTaskSubcategoryEfficiency(TaskSubcategoryEfficiency subcategoryEfficiency) {
         mRealm.beginTransaction();
         TaskSubcategoryEfficiency tse = mRealm.copyToRealm(subcategoryEfficiency);

@@ -58,13 +58,15 @@ class TseState {
     }
 
     public void efficiencyWasChanged(int newEfficiency){
-        final Efficiency efficiency = Efficiency.getEfficiency(newEfficiency);
-        mEfficiency.getRealm().executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                mEfficiency.setEfficiency(efficiency);
-            }
-        });
-        mIsChanged = true;
+        if (!mIsNew){
+            final Efficiency efficiency = Efficiency.getEfficiency(newEfficiency);
+            mEfficiency.getRealm().executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    mEfficiency.setEfficiency(efficiency);
+                }
+            });
+            mIsChanged = true;
+        }
     }
 }

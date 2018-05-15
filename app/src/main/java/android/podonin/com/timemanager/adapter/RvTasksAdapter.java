@@ -67,7 +67,7 @@ public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHol
             mItemLayout = itemView.findViewById(R.id.item_liner_layout);
         }
 
-        public void bind(final TimeTask timeTask){
+        public void bind(@NonNull final TimeTask timeTask){
             mTimeTask = timeTask;
             mItemLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -79,7 +79,11 @@ public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHol
             });
             mBodyView.setText(mTimeTask.getTaskBody());
             mDateView.setText(CalendarUtils.toDateString(getContext(), mTimeTask.getStartDate()));
-            mEfficiencyView.setText(mTimeTask.getSubcategoryEfficiencies().first().getEfficiency().toString());
+            if (mTimeTask.getSubcategoryEfficiencies() == null || mTimeTask.getSubcategoryEfficiencies().size() == 0 || mTimeTask.getSubcategoryEfficiencies().first().getEfficiency() == null) {
+
+            } else {
+                mEfficiencyView.setText(mTimeTask.getSubcategoryEfficiencies().first().getEfficiency().toString());
+            }
         }
 
         public Context getContext() {

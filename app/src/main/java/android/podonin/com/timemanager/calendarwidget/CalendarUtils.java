@@ -3,8 +3,13 @@ package android.podonin.com.timemanager.calendarwidget;
 import android.content.Context;
 import android.support.v4.util.Pools;
 import android.text.format.DateUtils;
+import android.text.style.TtsSpan;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.time.Instant;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -137,6 +142,17 @@ public class CalendarUtils {
     public static String toDateString(Context context, long dateMillis) {
         return DateUtils.formatDateRange(context, dateMillis, dateMillis,
                 DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
+    }
+
+    public static long toDateLong(String date) {
+        DateFormat dateFormat = DateFormat.getDateInstance();
+        Date parseDate = new Date();
+        try {
+            parseDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return parseDate.getTime();
     }
 
     private static class DateOnlyCalendar extends GregorianCalendar{

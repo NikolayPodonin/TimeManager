@@ -7,8 +7,13 @@ import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.repository.RealmHelper;
 import android.podonin.com.timemanager.view.TaskEditFragmentView;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.Realm;
 
 public class TaskEditFragmentPresenter {
     private TimeTask mTimeTask;
@@ -27,7 +32,7 @@ public class TaskEditFragmentPresenter {
     public void dispatchCreate() {
         if(mTimeTask != null && mFragmentView != null){
             mFragmentView.showTaskBody(mTimeTask.getTaskBody());
-            mFragmentView.showTaskDate(CalendarUtils.toDateString(mFragmentView.getFragmentContext(), mTimeTask.getStartDate()));
+            mFragmentView.showTaskDate(mTimeTask.getStartDate());
             mFragmentView.setDone(mTimeTask.isDone());
         }
     }
@@ -36,21 +41,25 @@ public class TaskEditFragmentPresenter {
         mFragmentView = null;
     }
 
-    public void onCategoryChoose(Category category, boolean isCashEmpty){
+    public void onCategoryChoose(@Nullable Category category, boolean isCashEmpty){
         if(category == null){
             mFragmentView.setSubcategoriesVisibility(false);
         } else if(isCashEmpty) {
             mFragmentView.setSubcategoriesVisibility(true);
-            List<Subcategory> subcategories = mRealmHelper.getSubcategoriesFromCategory(category);
-            mFragmentView.showSubcategories(subcategories, mTimeTask.getSubcategoryEfficiencies());
+            List<Subcategory> subcategories = new ArrayList<>();
+            subcategories.addAll(mRealmHelper.getSubcategoriesFromCategory(category));
+            List<TaskSubcategoryEfficiency> tseList = new ArrayList<>();
+            if (mTimeTask.getSubcategoryEfficiencies() != null){
+                tseList.addAll(mTimeTask.getSubcategoryEfficiencies());
+            }
+            mFragmentView.showSubcategories(subcategories, tseList);
         } else {
             mFragmentView.setSubcategoriesVisibility(true);
             mFragmentView.showSubcategoriesFromCash(category);
         }
     }
 
-    public void onSaveTaskSubcategoryEfficiencies(List<TaskSubcategoryEfficiency> changed, List<TaskSubcategoryEfficiency> deleted, List<TaskSubcategoryEfficiency> added) {
-        //TODO сохранить или удалить из БД объекты всех массивов
+    public void onSaveTaskSubcategoryEfficiencies(@NonNull List<TaskSubcategoryEfficiency> changed, @NonNull List<TaskSubcategoryEfficiency> deleted, @NonNull List<TaskSubcategoryEfficiency> added) {
         for (TaskSubcategoryEfficiency ch : changed) {
             mRealmHelper.changeTaskSubcategoryEfficiency(ch);
         }
@@ -63,7 +72,29 @@ public class TaskEditFragmentPresenter {
         }
     }
 
-    public void onSaveExit() {
-        mFragmentView.saveChanges();
+    public void onSaveTask(@Nullable final String taskBody, final long taskDate, final boolean checked) {
+        if (taskBody == null || taskBody.isEmpty() || taskBody.equals("")) {
+            if (mTimeTask.getSubcategoryEfficiencies() == null || mTimeTask.getSubcategoryEfficiencies().size() == 0){
+                mRealmHelper.deleteTimeTask(mTimeTask.getTaskId());
+            } else {
+                mFragmentView.showEmptyBodyMessage();
+            }
+        } else {
+            mTimeTask.getRealm().executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    mTimeTask.setStartDate(taskDate);
+                    mTimeTask.setTaskBody(taskBody);
+                    mTimeTask.setDone(checked);
+                }
+            });
+        }
+    }
+
+    public void onExit(boolean withOkButton) {
+        if (withOkButton) {
+            mFragmentView.saveChanges();
+        }
+        mFragmentView.exit();
     }
 }

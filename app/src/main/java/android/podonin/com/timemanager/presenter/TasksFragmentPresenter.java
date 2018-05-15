@@ -52,7 +52,9 @@ public class TasksFragmentPresenter {
     }
 
     public void onButtonClicked(){
-        TimeTask timeTask = mRealmHelper.addTimeTask(new TimeTask());
+        TimeTask task = new TimeTask();
+        task.setStartDate(CalendarUtils.today());
+        TimeTask timeTask = mRealmHelper.addTimeTask(task);
         mTasksFragmentView.goToTaskEditPage(timeTask.getTaskId());
     }
 
