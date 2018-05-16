@@ -15,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -67,43 +66,30 @@ public class TasksFragment extends Fragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mFragmentNavigator = FragmentNavigator.getInstance((AppCompatActivity)getActivity());
+        mFragmentNavigator = getFragmentNavigator();;
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mTasksAdapter = new RvTasksAdapter();
         mRecyclerView.setAdapter(mTasksAdapter);
 
-        mFragmentPresenter = new TasksFragmentPresenter(new RealmHelper());
-        mFragmentPresenter.setTasksFragment(this);
+        mFragmentPresenter = new TasksFragmentPresenter(this);
         mFragmentPresenter.dispatchCreate();
 
-        mCalendarView.setOnChangeListener(new EventCalendarView.OnChangeListener() {
-            @Override
-            public void onSelectedDayChange(long dayMillis) {
-                mFragmentPresenter.onSelectedDayChanged(dayMillis);
-            }
-        });
+        mCalendarView.setOnChangeListener(dayMillis -> mFragmentPresenter.onSelectedDayChanged(dayMillis));
 
-        mToolbarToggleFrame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFragmentPresenter.onToggleClicked();
-            }
-        });
+        mToolbarToggleFrame.setOnClickListener(v -> mFragmentPresenter.onToggleClicked());
 
-        mTasksActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFragmentPresenter.onButtonClicked();
-            }
-        });
+        mTasksActionButton.setOnClickListener(v -> mFragmentPresenter.onButtonClicked());
 
-        mTasksAdapter.setOnItemClickListener(new RvTasksAdapter.OnClickListener() {
-            @Override
-            public void onClick(View v, String taskId) {
-                mFragmentPresenter.onItemClicked(taskId);
-            }
-        });
+        mTasksAdapter.setOnItemClickListener((v, taskId) -> mFragmentPresenter.onItemClicked(taskId));
+    }
+
+    private FragmentNavigator getFragmentNavigator() {
+        ContainerActivity activity = (ContainerActivity) getActivity();
+        if (activity == null){
+            return null;
+        }
+        return activity.getFragmentNavigator();
     }
 
     @Override

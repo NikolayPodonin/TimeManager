@@ -14,4 +14,6 @@
     <string name="want_you_save_changes">Сохранить изменения?</string>
     <string name="changes_saved">Изменения сохранены</string>
     <string name="empty_body_message">Заполните тело задачи</string>
+    <string name="changes_not_saved">Изменения не сохранены</string>
+    <string name="empty" />
 </resources>

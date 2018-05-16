@@ -18,6 +18,7 @@ public class RvSubcategoryAdapter extends RecyclerView.Adapter<SubcategoryHolder
 
     public interface OnSaveChangesListener{
         void onSaveChanges(List<TaskSubcategoryEfficiency> changed, List<TaskSubcategoryEfficiency> deleted, List<TaskSubcategoryEfficiency> added);
+        void onCheckChanges(boolean isSomethingChanged);
     }
 
     private OnSaveChangesListener mOnSaveChangesListener;
@@ -89,12 +90,44 @@ public class RvSubcategoryAdapter extends RecyclerView.Adapter<SubcategoryHolder
         mOnSaveChangesListener.onSaveChanges(changedTseList, deletedTseList, addedTseList);
     }
 
-    public boolean isCategoryCashEmpty(@Nullable Category category) {
-        if (category != null){
-            return getSubcategoryCash(category).isEmpty();
-        } else {
-            return false;
+    public void checkChanges(){
+        for (TseState tseState: mBodyTseStateCash) {
+            if (tseState.getTse() != null){
+                if (tseState.isChanged() || tseState.isDeleted() || tseState.isNew()){
+                    mOnSaveChangesListener.onCheckChanges(true);
+                    return;
+                }
+            }
         }
+        for (TseState tseState: mBusinessTseStateCash) {
+            if (tseState.getTse() != null){
+                if (tseState.isChanged() || tseState.isDeleted() || tseState.isNew()){
+                    mOnSaveChangesListener.onCheckChanges(true);
+                    return;
+                }
+            }
+        }
+        for (TseState tseState: mSpiritTseStateCash) {
+            if (tseState.getTse() != null){
+                if (tseState.isChanged() || tseState.isDeleted() || tseState.isNew()){
+                    mOnSaveChangesListener.onCheckChanges(true);
+                    return;
+                }
+            }
+        }
+        for (TseState tseState: mRelationTseStateCash) {
+            if (tseState.getTse() != null){
+                if (tseState.isChanged() || tseState.isDeleted() || tseState.isNew()){
+                    mOnSaveChangesListener.onCheckChanges(true);
+                    return;
+                }
+            }
+        }
+        mOnSaveChangesListener.onCheckChanges(false);
+    }
+
+    public boolean isCategoryCashEmpty(@Nullable Category category) {
+        return category != null && getSubcategoryCash(category) != null && getSubcategoryCash(category).isEmpty();
     }
 
     public void setData(List<Subcategory> subcategories, List<TaskSubcategoryEfficiency> efficiencies) {

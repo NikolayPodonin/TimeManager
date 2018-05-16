@@ -5,6 +5,7 @@ import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +13,8 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import io.realm.RealmModel;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
@@ -23,15 +26,95 @@ import io.realm.RealmResults;
 
 public class RealmHelper {
 
+    private static RealmHelper sRealmHelper;
+
     private Realm mRealm;
 
-    public RealmHelper(){
-        mRealm = Realm.getDefaultInstance();
+    public static RealmHelper getInstance() {
+        if (sRealmHelper == null){
+            return new RealmHelper();
+        }
+        return sRealmHelper;
     }
 
+    private RealmHelper() {
+        try {
+            mRealm = Realm.getDefaultInstance();
+        } catch (Exception e) {
+            RealmConfiguration config = new RealmConfiguration.Builder()
+                    .name("timemanager.realm")
+                    .deleteRealmIfMigrationNeeded()
+                    .build();
+            mRealm = Realm.getInstance(config);
+        }
+    }
+
+    public <R extends RealmObject> void update(R obj){
+        insertOrUpdate(obj, true);
+    }
+
+    public <R extends RealmObject> void insert(R obj){
+        insertOrUpdate(obj, false);
+    }
+
+    public <R extends RealmObject> List<R> getAll(Class<R> rClass){
+        return getAllResults(rClass);
+    }
+
+    public <R extends RealmObject> List<R> getAll(Class<R> rClass, @NonNull String key, long value){
+        return mRealm.where(rClass).equalTo(key, value).findAll();
+    }
+
+    public <R extends RealmObject> List<R> getAll(Class<R> rClass, @NonNull String key, @NonNull String value){
+        return mRealm.where(rClass).equalTo(key, value).findAll();
+    }
+
+    /**
+     * Returns typed RealmObject. Need if you are often write and reed only one exemplar of type
+     *
+     * @param rClass - object type.
+     * @return exemplar of class extends RealmObject.
+     **/
+    public <R extends RealmObject> R get(Class<R> rClass){
+        return mRealm.where(rClass).findFirst();
+    }
+
+    public <R extends RealmObject> R get(Class<R> rClass, @NonNull String key, @NonNull String value){
+        return mRealm.where(rClass).equalTo(key, value).findFirst();
+    }
+
+    public <R extends RealmObject> void delete(Class<R> rClass, @NonNull String key, @NonNull String value){
+        mRealm.executeTransaction(r -> {
+            try {
+                RealmResults results = mRealm.where(rClass).equalTo(key, value).findAll();
+                results.deleteAllFromRealm();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private <R extends RealmObject> RealmResults<R> getAllResults(Class<R> rClass){
+        return mRealm.where(rClass).findAll();
+    }
+
+    private <R extends RealmObject> void insertOrUpdate(R obj, final boolean needClear) {
+        mRealm.executeTransaction(r -> {
+                try {
+                    if (needClear) {
+                        getAllResults(obj.getClass()).deleteAllFromRealm();
+                    }
+                    r.insertOrUpdate(obj);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    r.cancelTransaction();
+                }
+            });
+    }
+
+
     public List<Subcategory> getAllSubcategories(){
-        RealmResults<Subcategory> results = mRealm.where(Subcategory.class).findAll();
-        return results;
+        return mRealm.where(Subcategory.class).findAll();
     }
 
     public List<Subcategory> getSubcategoriesFromCategory(Category category) {
@@ -68,32 +151,25 @@ public class RealmHelper {
         mRealm.commitTransaction();
     }
 
-    public TaskSubcategoryEfficiency addTaskSubcategoryEfficiency(TaskSubcategoryEfficiency subcategoryEfficiency) {
+    public void insertTaskSubcategoryEfficiency(TaskSubcategoryEfficiency subcategoryEfficiency) {
         mRealm.beginTransaction();
         TaskSubcategoryEfficiency tse = mRealm.copyToRealm(subcategoryEfficiency);
         tse.getTimeTask().getSubcategoryEfficiencies().add(tse);
         mRealm.commitTransaction();
-        return tse;
     }
 
-    public List<TimeTask> getTimeTasksPerDay(long dayMillis) {
-        long currentDay = CalendarUtils.currentDay(dayMillis);
-        return mRealm.where(TimeTask.class).equalTo(TimeTask.START_DATE_FIELD, currentDay).findAll();
+
+    public void close() {
+        mRealm.close();
     }
 
-    public TaskSubcategoryEfficiency changeTaskSubcategoryEfficiency(TaskSubcategoryEfficiency changedTse) {
-        mRealm.beginTransaction();
-        TaskSubcategoryEfficiency tse = mRealm.copyToRealm(changedTse);
-        mRealm.commitTransaction();
-        return tse;
-    }
-
-    public void deleteTaskSubcategoryEfficiency(TaskSubcategoryEfficiency deletedTse) {
-        mRealm.beginTransaction();
-        RealmResults<TaskSubcategoryEfficiency> query = mRealm.where(TaskSubcategoryEfficiency.class)
-                .equalTo(TaskSubcategoryEfficiency.TASK_SUB_EFFICIENCY_ID, deletedTse.getTaskSubEfficiencyId()).findAll();
-        deletedTse.getTimeTask().getSubcategoryEfficiencies().remove(deletedTse);
-        query.deleteAllFromRealm();
-        mRealm.commitTransaction();
+    public void clear() {
+        try {
+            mRealm.close();
+            Realm.deleteRealm(mRealm.getConfiguration());
+            sRealmHelper = null;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

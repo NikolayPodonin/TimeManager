@@ -13,21 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import java.lang.ref.WeakReference;
 
 public class FragmentNavigator {
-    private static FragmentNavigator sNavigator;
     private WeakReference<AppCompatActivity> mActivityWeakReference;
 
-    private FragmentNavigator(@NonNull AppCompatActivity activity) {
+    public FragmentNavigator(@NonNull AppCompatActivity activity) {
         mActivityWeakReference = new WeakReference<>(activity);
     }
 
     private FragmentNavigator(){}
-
-    public static FragmentNavigator getInstance(@NonNull AppCompatActivity activity){
-        if (sNavigator == null) {
-            sNavigator = new FragmentNavigator(activity);
-        }
-        return sNavigator;
-    }
 
     protected Context getContext(){
         return mActivityWeakReference.get();

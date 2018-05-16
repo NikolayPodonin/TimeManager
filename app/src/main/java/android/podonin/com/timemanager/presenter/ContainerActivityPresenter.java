@@ -10,13 +10,15 @@ import android.support.annotation.NonNull;
 
 import java.util.Calendar;
 
-public class ActivityPresenter {
+public class ContainerActivityPresenter {
 
     @NonNull
     private ActivityView mLayoutView;
+    private final RealmHelper mRealmHelper;
 
-    public ActivityPresenter(@NonNull ActivityView view){
+    public ContainerActivityPresenter(@NonNull ActivityView view){
         mLayoutView = view;
+        mRealmHelper = RealmHelper.getInstance();
     }
 
     public void dispatchCreate(){
@@ -24,9 +26,14 @@ public class ActivityPresenter {
         mLayoutView.showTasksFragment();
     }
 
+    public void dispatchDestroy(){
+        mLayoutView = null;
+        mRealmHelper.clear();
+    }
+
 
     private void createExampleData(){
-        RealmHelper mRealmHelper = new RealmHelper();
+        RealmHelper mRealmHelper = RealmHelper.getInstance();
 
         for (Category cat : Category.values()) {
             for(Integer i = 0; i < 4; i++){
@@ -43,7 +50,7 @@ public class ActivityPresenter {
             timeTask.setTaskBody(sc.getName());
             final TimeTask t = mRealmHelper.addTimeTask(timeTask);
             TaskSubcategoryEfficiency subcategoryEfficiency = new TaskSubcategoryEfficiency(t, sc);
-            mRealmHelper.addTaskSubcategoryEfficiency(subcategoryEfficiency);
+            mRealmHelper.insertTaskSubcategoryEfficiency(subcategoryEfficiency);
         }
     }
 }

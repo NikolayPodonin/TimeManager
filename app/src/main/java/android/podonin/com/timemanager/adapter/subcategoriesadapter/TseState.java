@@ -3,14 +3,15 @@ package android.podonin.com.timemanager.adapter.subcategoriesadapter;
 import android.podonin.com.timemanager.model.Efficiency;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
+import android.support.annotation.NonNull;
 
 import io.realm.Realm;
 
 class TseState {
-    TaskSubcategoryEfficiency mEfficiency;
-    boolean mIsChanged;
-    boolean mIsDeleted;
-    boolean mIsNew;
+    private TaskSubcategoryEfficiency mEfficiency;
+    private boolean mIsChanged;
+    private boolean mIsDeleted;
+    private boolean mIsNew;
 
     TseState(TaskSubcategoryEfficiency subcategoryEfficiency){
         mEfficiency = subcategoryEfficiency;
@@ -58,15 +59,12 @@ class TseState {
     }
 
     public void efficiencyWasChanged(int newEfficiency){
+        final Efficiency efficiency = Efficiency.getEfficiency(newEfficiency);
         if (!mIsNew){
-            final Efficiency efficiency = Efficiency.getEfficiency(newEfficiency);
-            mEfficiency.getRealm().executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    mEfficiency.setEfficiency(efficiency);
-                }
-            });
+            mEfficiency.getRealm().executeTransaction(realm -> mEfficiency.setEfficiency(efficiency));
             mIsChanged = true;
+        } else {
+            mEfficiency.setEfficiency(efficiency);
         }
     }
 }

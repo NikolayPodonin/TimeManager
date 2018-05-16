@@ -19,18 +19,15 @@ public class TasksFragmentPresenter {
     private RealmHelper mRealmHelper;
     private List<TimeTask> mTimeTasks = new ArrayList<>();
 
+    public TasksFragmentPresenter(TasksFragmentView tasksFragmentView) {
+        mTasksFragmentView = tasksFragmentView;
+        mRealmHelper = RealmHelper.getInstance();
+    }
+
     private TasksFragmentView mTasksFragmentView;
 
-    public TasksFragmentPresenter(RealmHelper realmHelper) {
-        mRealmHelper = realmHelper;
-    }
-
-    public void setTasksFragment(TasksFragment tasksFragment) {
-        mTasksFragmentView = tasksFragment;
-    }
-
     public void dispatchCreate(){
-        mTimeTasks.addAll(mRealmHelper.getAllTimeTasks());
+        mTimeTasks.addAll(mRealmHelper.getAll(TimeTask.class));
         mTasksFragmentView.showTimeTasks(mTimeTasks);
 
         mTasksFragmentView.showMonthInToolbar(CalendarUtils.toMonthString(mTasksFragmentView.getFragmentContext(), CalendarUtils.today()));
@@ -43,7 +40,7 @@ public class TasksFragmentPresenter {
     public void onSelectedDayChanged(long dayMillis){
         mTasksFragmentView.showMonthInToolbar(CalendarUtils.toMonthString(mTasksFragmentView.getFragmentContext(), dayMillis));
         mTimeTasks.clear();
-        mTimeTasks.addAll(mRealmHelper.getTimeTasksPerDay(dayMillis));
+        mTimeTasks.addAll(mRealmHelper.getAll(TimeTask.class, TimeTask.START_DATE_FIELD, dayMillis));
         mTasksFragmentView.showTimeTasks(mTimeTasks);
     }
 
@@ -54,8 +51,8 @@ public class TasksFragmentPresenter {
     public void onButtonClicked(){
         TimeTask task = new TimeTask();
         task.setStartDate(CalendarUtils.today());
-        TimeTask timeTask = mRealmHelper.addTimeTask(task);
-        mTasksFragmentView.goToTaskEditPage(timeTask.getTaskId());
+        mRealmHelper.insert(task);
+        mTasksFragmentView.goToTaskEditPage(task.getTaskId());
     }
 
     public void onItemClicked(String taskId){

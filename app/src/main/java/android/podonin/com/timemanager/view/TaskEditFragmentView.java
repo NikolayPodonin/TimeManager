@@ -1,10 +1,8 @@
 package android.podonin.com.timemanager.view;
 
-import android.content.Context;
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
-import android.podonin.com.timemanager.model.TimeTask;
 
 import java.util.List;
 
@@ -25,5 +23,7 @@ public interface TaskEditFragmentView {
 
     void exit();
 
-    void showEmptyBodyMessage();
+    void checkSomeChanges();
+
+    void showMessage(int message);
 }
