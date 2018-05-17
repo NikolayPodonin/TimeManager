@@ -68,10 +68,14 @@ public class TaskEditFragmentPresenter {
             mRealmHelper.delete(de.getClass(), TaskSubcategoryEfficiency.TASK_SUB_EFFICIENCY_ID, de.getTaskSubEfficiencyId());
         }
         for (TaskSubcategoryEfficiency ne : added) {
+
+            ne.setTimeTask(mTimeTask);
             mRealmHelper.insert(ne);
-            mTimeTask.getRealm().executeTransaction(r -> {
-               mTimeTask.getSubcategoryEfficiencies().add(ne);
-            });
+
+
+//            mTimeTask.getRealm().executeTransaction(r -> {
+//               mTimeTask.getSubcategoryEfficiencies().add(ne);
+//            });
             //ne.setTimeTask(mTimeTask);
             //mRealmHelper.insertTaskSubcategoryEfficiency(ne);
         }
