@@ -150,7 +150,7 @@ public class TaskEditFragment extends Fragment
     @SuppressLint("ShowToast")
     @Override
     public void showMessage(int message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

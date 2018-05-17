@@ -13,8 +13,16 @@ public class ManagerApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//        RealmConfiguration config = new RealmConfiguration.Builder().build();
-//        Realm.setDefaultConfiguration(config);
+
+        initRealm();
+    }
+
+    private void initRealm(){
         Realm.init(this);
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .name("timemanager.realm")
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(config);
     }
 }
