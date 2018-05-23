@@ -61,10 +61,8 @@ class TseState {
     public void efficiencyWasChanged(int newEfficiency){
         final Efficiency efficiency = Efficiency.getEfficiency(newEfficiency);
         if (!mIsNew){
-            mEfficiency.getRealm().executeTransaction(realm -> mEfficiency.setEfficiency(efficiency));
             mIsChanged = true;
-        } else {
-            mEfficiency.setEfficiency(efficiency);
         }
+        mEfficiency.setEfficiency(efficiency);
     }
 }

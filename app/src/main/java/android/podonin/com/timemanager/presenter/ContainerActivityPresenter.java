@@ -40,17 +40,17 @@ public class ContainerActivityPresenter {
                 Subcategory sc = new Subcategory();
                 sc.setCategory(cat);
                 sc.setName(i.toString() + "_" + cat.name());
-                mRealmHelper.addSubcategory(sc);
+                mRealmHelper.insert(sc);
             }
         }
 
-        for (Subcategory sc: mRealmHelper.getAllSubcategories()) {
+        for (Subcategory sc: mRealmHelper.getAll(Subcategory.class)) {
             TimeTask timeTask = new TimeTask();
             timeTask.setStartDate(Calendar.getInstance().getTimeInMillis());
             timeTask.setTaskBody(sc.getName());
-            final TimeTask t = mRealmHelper.addTimeTask(timeTask);
-            TaskSubcategoryEfficiency subcategoryEfficiency = new TaskSubcategoryEfficiency(t, sc);
-            mRealmHelper.insertTaskSubcategoryEfficiency(subcategoryEfficiency);
+            mRealmHelper.insert(timeTask);
+            TaskSubcategoryEfficiency subcategoryEfficiency = new TaskSubcategoryEfficiency(timeTask, sc);
+            mRealmHelper.insert(subcategoryEfficiency);
         }
     }
 }

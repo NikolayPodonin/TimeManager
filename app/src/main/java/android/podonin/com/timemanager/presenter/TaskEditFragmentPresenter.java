@@ -64,29 +64,25 @@ public class TaskEditFragmentPresenter {
     }
 
     public void onSaveTaskSubcategoryEfficiencies(@NonNull List<TaskSubcategoryEfficiency> changed, @NonNull List<TaskSubcategoryEfficiency> deleted, @NonNull List<TaskSubcategoryEfficiency> added) {
+        for (TaskSubcategoryEfficiency ce : changed) {
+            mRealmHelper.insert(ce);
+        }
         for (TaskSubcategoryEfficiency de : deleted) {
+            mTimeTask.getSubcategoryEfficiencies().remove(de);
             mRealmHelper.delete(de.getClass(), TaskSubcategoryEfficiency.TASK_SUB_EFFICIENCY_ID, de.getTaskSubEfficiencyId());
         }
         for (TaskSubcategoryEfficiency ne : added) {
-
             ne.setTimeTask(mTimeTask);
+            mTimeTask.getSubcategoryEfficiencies().add(ne);
             mRealmHelper.insert(ne);
-
-
-//            mTimeTask.getRealm().executeTransaction(r -> {
-//               mTimeTask.getSubcategoryEfficiencies().add(ne);
-//            });
-            //ne.setTimeTask(mTimeTask);
-            //mRealmHelper.insertTaskSubcategoryEfficiency(ne);
         }
     }
 
     public void onSaveTask(@Nullable final String taskBody, final long taskDate, final boolean checked) {
-        mTimeTask.getRealm().executeTransaction(realm -> {
-            mTimeTask.setStartDate(taskDate);
-            mTimeTask.setTaskBody(taskBody);
-            mTimeTask.setDone(checked);
-        });
+        mTimeTask.setStartDate(taskDate);
+        mTimeTask.setTaskBody(taskBody);
+        mTimeTask.setDone(checked);
+        mRealmHelper.insert(mTimeTask);
     }
 
     private boolean isEmptyBody(@Nullable String taskBody) {
