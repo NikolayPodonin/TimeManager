@@ -9,7 +9,10 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import javax.annotation.Nullable;
+
 class SubcategoryHolder extends RecyclerView.ViewHolder{
+    private final View mLayout;
     private TextView mSubcategoryName;
     private SeekBar mEfficiencySeekBar;
     private CheckBox mIsAddedToTask;
@@ -21,21 +24,25 @@ class SubcategoryHolder extends RecyclerView.ViewHolder{
         mSubcategoryName = itemView.findViewById(R.id.subcategory_name_text_view);
         mEfficiencySeekBar = itemView.findViewById(R.id.efficiency_seek_bar);
         mIsAddedToTask = itemView.findViewById(R.id.is_added_check_box);
+        mLayout = itemView.findViewById(R.id.subcategory_efficiency_layout);
     }
 
-    void bind(Subcategory subcategory, TseState tseState){
+    void bind(Subcategory subcategory, TseState tseState, @Nullable RvSubcategoryAdapter.OnLongItemClickListener onLongItemClickListener){
         mSubcategory = subcategory;
         mSubcategoryName.setText(mSubcategory.getName());
 
         mTseState = tseState;
         mEfficiencySeekBar.setVisibility(View.GONE);
 
-        mIsAddedToTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                onIsAddedCheckChange(isChecked);
+
+        mLayout.setOnLongClickListener(v -> {
+            if (onLongItemClickListener != null) {
+                onLongItemClickListener.onLongClick(mSubcategory.getSubcategoryId());
             }
+            return false;
         });
+
+        mIsAddedToTask.setOnCheckedChangeListener((buttonView, isChecked) -> onIsAddedCheckChange(isChecked));
 
         mEfficiencySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

@@ -11,7 +11,7 @@ import io.realm.annotations.Required;
  */
 
 public class Subcategory extends RealmObject {
-    private static final String SUBCATEGORY_ID = "mSubcategoryId";
+    public static final String SUBCATEGORY_ID = "mSubcategoryId";
     public static final String NAME_FIELD = "mName";
     public static final String CATEGORY_FIELD = "mCategory";
 

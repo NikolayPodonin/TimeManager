@@ -26,7 +26,7 @@ public class TimeTask extends RealmObject{
     private String mTaskId;
     private String mTaskBody;
     private long mStartDate;
-    private RealmList<TaskSubcategoryEfficiency> mSubcategoryEfficiencies;
+    private RealmList<TaskSubcategoryEfficiency> mSubcategoryEfficiencies = new RealmList<>();
     private boolean mDone;
 
     public TimeTask() {

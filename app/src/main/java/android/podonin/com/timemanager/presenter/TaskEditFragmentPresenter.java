@@ -1,6 +1,7 @@
 package android.podonin.com.timemanager.presenter;
 
 import android.podonin.com.timemanager.R;
+import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
@@ -11,9 +12,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
-
-import io.realm.Realm;
 
 public class TaskEditFragmentPresenter {
     private TimeTask mTimeTask;
@@ -22,6 +22,7 @@ public class TaskEditFragmentPresenter {
     private boolean mIsNeedToSave;
     private boolean mIsNeedToDelete;
     private boolean mIsOkClosed;
+    private Category mCurrentCategory;
 
     public TaskEditFragmentPresenter(TaskEditFragmentView fragmentView, String timeTaskId) {
         mRealmHelper = RealmHelper.getInstance();
@@ -47,16 +48,12 @@ public class TaskEditFragmentPresenter {
     }
 
     public void onCategoryChoose(@Nullable Category category, boolean isCashEmpty){
+        mCurrentCategory = category;
         if(category == null){
             mFragmentView.setSubcategoriesVisibility(false);
         } else if(isCashEmpty) {
             mFragmentView.setSubcategoriesVisibility(true);
-            List<Subcategory> subcategories = new ArrayList<>(mRealmHelper.getAll(Subcategory.class, Subcategory.CATEGORY_FIELD, category.toString()));
-            List<TaskSubcategoryEfficiency> tseList = new ArrayList<>();
-            if (mTimeTask.getSubcategoryEfficiencies() != null){
-                tseList.addAll(mTimeTask.getSubcategoryEfficiencies());
-            }
-            mFragmentView.showSubcategories(subcategories, tseList);
+            getAndShowSubcategories(category);
         } else {
             mFragmentView.setSubcategoriesVisibility(true);
             mFragmentView.showSubcategoriesFromCash(category);
@@ -124,5 +121,63 @@ public class TaskEditFragmentPresenter {
         if (mIsNeedToSave && !mIsOkClosed){
             mIsNeedToDelete = false;
         }
+    }
+
+    public void onLongSubcategoryClick(String subId) {
+        mFragmentView.showDeleteSubcategoryDialog(subId);
+    }
+
+    public void deleteSubcategory(String subId) {
+        Category category = mRealmHelper.get(Subcategory.class, Subcategory.SUBCATEGORY_ID, subId).getCategory();
+
+        TaskSubcategoryEfficiency tseff = null;
+        for (TaskSubcategoryEfficiency tse : mTimeTask.getSubcategoryEfficiencies()) {
+            if (tse.getSubcategory().getSubcategoryId().equals(subId)){
+                tseff = tse;
+                break;
+            }
+        }
+        if (tseff != null){
+            mTimeTask.getSubcategoryEfficiencies().remove(tseff);
+        }
+
+        mRealmHelper.delete(TaskSubcategoryEfficiency.class,
+                TaskSubcategoryEfficiency.SUBCATEGORY_FIELD + "." + Subcategory.SUBCATEGORY_ID,
+                subId);
+        mRealmHelper.delete(Subcategory.class, Subcategory.SUBCATEGORY_ID, subId);
+
+        getAndShowSubcategories(category);
+    }
+
+    private void getAndShowSubcategories(Category category) {
+        List<Subcategory> subcategories = new ArrayList<>(mRealmHelper.getAll(Subcategory.class, Subcategory.CATEGORY_FIELD, category.toString()));
+        List<TaskSubcategoryEfficiency> tseList = new ArrayList<>(mTimeTask.getSubcategoryEfficiencies());
+
+        mFragmentView.showSubcategories(category, subcategories, tseList);
+    }
+
+    public void onAddSubcategoryClick() {
+        mFragmentView.showAddSubcategoryDialog();
+    }
+
+    public void addNewSubcategory(String subName) {
+        Subcategory newSub = new Subcategory();
+        newSub.setCategory(mCurrentCategory);
+        newSub.setName(subName);
+        mRealmHelper.insert(newSub);
+
+        getAndShowSubcategories(mCurrentCategory);
+    }
+
+    public void onDateChoose(int year, int month, int day) {
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.set(year, month, day);
+        long dayMillis = calendar.getTimeInMillis();
+        dayMillis = CalendarUtils.currentDay(dayMillis);
+        mFragmentView.showTaskDate(dayMillis);
+    }
+
+    public void onDateClick() {
+        mFragmentView.showDatePickerDialog();
     }
 }

@@ -1,6 +1,7 @@
 package android.podonin.com.timemanager.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.podonin.com.timemanager.R;
 import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.TimeTask;
@@ -12,20 +13,36 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHolder> {
+
 
     public interface OnClickListener{
         void onClick(View v, String taskId);
     }
 
+    public interface OnLongClickListener {
+        void onLongClick(View view, String taskId);
+    }
+
     private List<TimeTask> mTimeTasks = new ArrayList<>();
     private OnClickListener mOnItemClickListener;
+    private OnLongClickListener mOnLongItemClickListener;
 
     public void setData(List<TimeTask> timeTasks) {
         mTimeTasks.clear();
         mTimeTasks.addAll(timeTasks);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            mTimeTasks.sort((timeTask, t1) -> {
+                if (timeTask.getTaskBody() != null && t1.getTaskBody() != null) {
+                    return timeTask.getTaskBody().compareTo(t1.getTaskBody());
+                } else {
+                    return 0;
+                }
+            });
+        }
         notifyDataSetChanged();
     }
 
@@ -33,16 +50,20 @@ public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHol
         mOnItemClickListener = onItemClickListener;
     }
 
+    public void setOnLongItemClickListener(OnLongClickListener onLongItemClickListener) {
+        mOnLongItemClickListener = onLongItemClickListener;
+    }
+
     @NonNull
     @Override
-    public TasksHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TasksHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.rv_item_task, parent, false);
         return new TasksHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(TasksHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TasksHolder holder, int position) {
         holder.bind(mTimeTasks.get(position));
     }
 
@@ -59,7 +80,7 @@ public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHol
         private TextView mEfficiencyView;
         private View mItemLayout;
 
-        public TasksHolder(@NonNull View itemView) {
+        TasksHolder(@NonNull View itemView) {
             super(itemView);
             mBodyView = itemView.findViewById(R.id.task_body);
             mDateView = itemView.findViewById(R.id.task_date);
@@ -67,21 +88,22 @@ public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHol
             mItemLayout = itemView.findViewById(R.id.item_liner_layout);
         }
 
-        public void bind(@NonNull final TimeTask timeTask){
+        void bind(@NonNull final TimeTask timeTask){
             mTimeTask = timeTask;
-            mItemLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onClick(v, mTimeTask.getTaskId());
-                    }
+            mItemLayout.setOnClickListener(v -> {
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onClick(v, mTimeTask.getTaskId());
                 }
+            });
+            mItemLayout.setOnLongClickListener(view -> {
+                if (mOnLongItemClickListener != null){
+                    mOnLongItemClickListener.onLongClick(view, mTimeTask.getTaskId());
+                }
+                return false;
             });
             mBodyView.setText(mTimeTask.getTaskBody());
             mDateView.setText(CalendarUtils.toDateString(getContext(), mTimeTask.getStartDate()));
-            if (mTimeTask.getSubcategoryEfficiencies() == null || mTimeTask.getSubcategoryEfficiencies().size() == 0 || mTimeTask.getSubcategoryEfficiencies().first().getEfficiency() == null) {
-
-            } else {
+            if (mTimeTask.getSubcategoryEfficiencies() != null && mTimeTask.getSubcategoryEfficiencies().size() != 0 && mTimeTask.getSubcategoryEfficiencies().first().getEfficiency() != null) {
                 mEfficiencyView.setText(mTimeTask.getSubcategoryEfficiencies().first().getEfficiency().toString());
             }
         }

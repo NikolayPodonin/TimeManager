@@ -2,11 +2,11 @@ package android.podonin.com.timemanager.view.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.podonin.com.timemanager.R;
-import android.podonin.com.timemanager.adapter.subcategoriesadapter.RvSubcategoryAdapter;
 import android.podonin.com.timemanager.adapter.categoriesadapter.RvCategoriesAdapter;
+import android.podonin.com.timemanager.adapter.subcategoriesadapter.RvSubcategoryAdapter;
 import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.measuredrecyclerviewvidget.MeasuredRecyclerView;
 import android.podonin.com.timemanager.model.Category;
@@ -14,7 +14,6 @@ import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.navigation.FragmentNavigator;
 import android.podonin.com.timemanager.presenter.TaskEditFragmentPresenter;
-import android.podonin.com.timemanager.repository.RealmHelper;
 import android.podonin.com.timemanager.view.TaskEditFragmentView;
 import android.podonin.com.timemanager.view.activity.ContainerActivity;
 import android.support.annotation.NonNull;
@@ -28,10 +27,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,6 +52,7 @@ public class TaskEditFragment extends Fragment
 
     private AppCompatButton mOkButton;
     private AppCompatButton mBackButton;
+    private ImageButton mAddSubcategoryButton;
 
     private FragmentNavigator mNavigator;
     private TaskEditFragmentPresenter mPresenter;
@@ -70,6 +73,8 @@ public class TaskEditFragment extends Fragment
 
         mOkButton = view.findViewById(R.id.ok_button);
         mBackButton = view.findViewById(R.id.back_button);
+        mAddSubcategoryButton = view.findViewById(R.id.add_subcategory_button);
+        mAddSubcategoryButton.setVisibility(View.GONE);
 
         mSubcategoriesRecyclerView = view.findViewById(R.id.subcategories_efficiency_recycler_view);
         mCategoriesRecyclerView = view.findViewById(R.id.category_recycler_view);
@@ -104,6 +109,7 @@ public class TaskEditFragment extends Fragment
                 mPresenter.onCheckChanges(isSomethingChanged, mTaskBody.getText().toString(), CalendarUtils.toDateLong(mDate.getText().toString()), mDone.isChecked());
             }
         });
+        mRvSubcategoryAdapter.setOnLongItemClickListener(subId -> mPresenter.onLongSubcategoryClick(subId));
         mSubcategoriesRecyclerView.setAdapter(mRvSubcategoryAdapter);
 
         mCategoriesRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
@@ -114,11 +120,15 @@ public class TaskEditFragment extends Fragment
         });
         mCategoriesRecyclerView.setAdapter(categoriesAdapter);
 
+        mDate.setOnClickListener(v -> mPresenter.onDateClick());
+
         mOkButton.setOnClickListener(v -> mPresenter.onOkExit());
 
         mNavigator = getFragmentNavigator();
 
         mBackButton.setOnClickListener(v -> mPresenter.onBackExit());
+
+        mAddSubcategoryButton.setOnClickListener(v -> mPresenter.onAddSubcategoryClick());
     }
 
     private FragmentNavigator getFragmentNavigator() {
@@ -127,11 +137,6 @@ public class TaskEditFragment extends Fragment
             return null;
         }
         return activity.getFragmentNavigator();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
     @Override
@@ -168,16 +173,63 @@ public class TaskEditFragment extends Fragment
     public void setSubcategoriesVisibility(boolean visibility) {
         if (visibility) {
             mSubcategoriesRecyclerView.setVisibility(View.VISIBLE);
+            mAddSubcategoryButton.setVisibility(View.VISIBLE);
             mDividerView.setVisibility(View.VISIBLE);
         } else {
             mSubcategoriesRecyclerView.setVisibility(View.GONE);
+            mAddSubcategoryButton.setVisibility(View.GONE);
             mDividerView.setVisibility(View.GONE);
         }
     }
 
     @Override
-    public void showSubcategories(@NonNull List<Subcategory> subcategories, @NonNull List<TaskSubcategoryEfficiency> efficiencies){
-        mRvSubcategoryAdapter.setData(subcategories, efficiencies);
+    public void showDeleteSubcategoryDialog(String subId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog = builder.setTitle(R.string.title_delete_subcategory_dialog)
+                .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
+                    mPresenter.deleteSubcategory(subId);
+                    dialogInterface.cancel();
+                })
+                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                .create();
+
+        dialog.show();
+    }
+
+    @Override
+    public void showAddSubcategoryDialog() {
+        EditText editText = new EditText(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog = builder.setTitle(R.string.title_add_subcategory_dialog)
+                .setView(editText)
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
+                    String subName = editText.getText().toString();
+                    mPresenter.addNewSubcategory(subName);
+                    dialogInterface.cancel();
+                })
+                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                .create();
+
+        dialog.show();
+    }
+
+    @Override
+    public void showDatePickerDialog() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            DatePickerDialog dialog = new DatePickerDialog(getActivity());
+            dialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                    mPresenter.onDateChoose(i, i1, i2);
+                }
+            });
+            dialog.show();
+        }
+    }
+
+    @Override
+    public void showSubcategories(@NonNull Category category, @NonNull List<Subcategory> subcategories, @NonNull List<TaskSubcategoryEfficiency> efficiencies){
+        mRvSubcategoryAdapter.setData(category, subcategories, efficiencies);
     }
 
     @Override

@@ -21,7 +21,12 @@ public class RvSubcategoryAdapter extends RecyclerView.Adapter<SubcategoryHolder
         void onCheckChanges(boolean isSomethingChanged);
     }
 
+    public interface OnLongItemClickListener {
+        void onLongClick(String tseId);
+    }
+
     private OnSaveChangesListener mOnSaveChangesListener;
+    private OnLongItemClickListener mOnLongItemClickListener;
 
     private List<TseState> mBodyTseStateCash = new ArrayList<>();
     private List<TseState> mBusinessTseStateCash = new ArrayList<>();
@@ -35,6 +40,10 @@ public class RvSubcategoryAdapter extends RecyclerView.Adapter<SubcategoryHolder
 
     public void setOnSaveChangesListener(OnSaveChangesListener onSaveChangesListener) {
         mOnSaveChangesListener = onSaveChangesListener;
+    }
+
+    public void setOnLongItemClickListener(OnLongItemClickListener onLongItemClickListener) {
+        mOnLongItemClickListener = onLongItemClickListener;
     }
 
     public void saveChanges(){
@@ -127,11 +136,11 @@ public class RvSubcategoryAdapter extends RecyclerView.Adapter<SubcategoryHolder
     }
 
     public boolean isCategoryCashEmpty(@Nullable Category category) {
-        return category != null && getSubcategoryCash(category) != null && getSubcategoryCash(category).isEmpty();
+        return category == null || getSubcategoryCash(category).isEmpty();
     }
 
-    public void setData(List<Subcategory> subcategories, List<TaskSubcategoryEfficiency> efficiencies) {
-        mCurrentCategory = subcategories.get(0).getCategory();
+    public void setData(@NonNull Category category, List<Subcategory> subcategories, List<TaskSubcategoryEfficiency> efficiencies) {
+        mCurrentCategory = category;
 
         List<Subcategory> currentSubcategoryCash = getCurrentSubcategoryCash();
         currentSubcategoryCash.clear();
@@ -191,7 +200,7 @@ public class RvSubcategoryAdapter extends RecyclerView.Adapter<SubcategoryHolder
             case Relationships:
                 return mRelationSubcategoryCash;
             default:
-                return null;
+                return new ArrayList<>();
         }
     }
 
@@ -208,7 +217,7 @@ public class RvSubcategoryAdapter extends RecyclerView.Adapter<SubcategoryHolder
         List<Subcategory> currentSubcategoryCash = getCurrentSubcategoryCash();
         List<TseState> currentTseStateCash = getCurrentTseStateCash();
 
-        holder.bind(currentSubcategoryCash.get(position), currentTseStateCash.get(position));
+        holder.bind(currentSubcategoryCash.get(position), currentTseStateCash.get(position), mOnLongItemClickListener);
     }
 
     @Override

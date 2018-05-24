@@ -2,6 +2,7 @@ package android.podonin.com.timemanager.presenter;
 
 import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.calendarwidget.EventCalendarView;
+import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.repository.RealmHelper;
 import android.podonin.com.timemanager.view.TasksFragmentView;
@@ -18,6 +19,7 @@ public class TasksFragmentPresenter {
     @NonNull
     private RealmHelper mRealmHelper;
     private List<TimeTask> mTimeTasks = new ArrayList<>();
+    private long mSelectedDay;
 
     public TasksFragmentPresenter(TasksFragmentView tasksFragmentView) {
         mTasksFragmentView = tasksFragmentView;
@@ -26,11 +28,8 @@ public class TasksFragmentPresenter {
 
     private TasksFragmentView mTasksFragmentView;
 
-    public void dispatchCreate(){
-        mTimeTasks.addAll(mRealmHelper.getAll(TimeTask.class));
-        mTasksFragmentView.showTimeTasks(mTimeTasks);
-
-        mTasksFragmentView.showMonthInToolbar(CalendarUtils.toMonthString(mTasksFragmentView.getFragmentContext(), CalendarUtils.today()));
+    public void dispatchCreate(long dayMillis){
+        showTasksPerDay(dayMillis);
     }
 
     public void dispatchDestroy() {
@@ -38,9 +37,14 @@ public class TasksFragmentPresenter {
     }
 
     public void onSelectedDayChanged(long dayMillis){
-        mTasksFragmentView.showMonthInToolbar(CalendarUtils.toMonthString(mTasksFragmentView.getFragmentContext(), dayMillis));
+        showTasksPerDay(dayMillis);
+    }
+
+    private void showTasksPerDay(long dayMillis) {
+        mSelectedDay = dayMillis;
+        mTasksFragmentView.showMonthInToolbar(mSelectedDay);
         mTimeTasks.clear();
-        mTimeTasks.addAll(mRealmHelper.getAll(TimeTask.class, TimeTask.START_DATE_FIELD, dayMillis));
+        mTimeTasks.addAll(mRealmHelper.getAll(TimeTask.class, TimeTask.START_DATE_FIELD, mSelectedDay));
         mTasksFragmentView.showTimeTasks(mTimeTasks);
     }
 
@@ -57,5 +61,28 @@ public class TasksFragmentPresenter {
 
     public void onItemClicked(String taskId){
         mTasksFragmentView.goToTaskEditPage(taskId);
+    }
+
+    public void onLongItemClicked(String taskId) {
+        mTasksFragmentView.showDeleteTaskDialog(taskId);
+    }
+
+    public void deleteTask(String taskId) {
+        TimeTask timeTask = null;
+        for (TimeTask task : mTimeTasks) {
+            if (task.getTaskId().equals(taskId)) {
+                timeTask = task;
+            }
+        }
+        if (timeTask == null) {
+            return;
+        }
+        for (TaskSubcategoryEfficiency tse: timeTask.getSubcategoryEfficiencies()) {
+            mRealmHelper.delete(tse.getClass(), TaskSubcategoryEfficiency.TASK_SUB_EFFICIENCY_ID, taskId);
+        }
+        mRealmHelper.delete(TimeTask.class, TimeTask.TASK_ID, taskId);
+        mTimeTasks.clear();
+        mTimeTasks.addAll(mRealmHelper.getAll(TimeTask.class, TimeTask.START_DATE_FIELD, mSelectedDay));
+        mTasksFragmentView.showTimeTasks(mTimeTasks);
     }
 }

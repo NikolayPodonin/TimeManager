@@ -1,15 +1,15 @@
 package android.podonin.com.timemanager.view.fragment;
 
-import android.content.Context;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.podonin.com.timemanager.R;
+import android.podonin.com.timemanager.adapter.RvTasksAdapter;
+import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.calendarwidget.EventCalendarView;
+import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.navigation.FragmentNavigator;
 import android.podonin.com.timemanager.presenter.TasksFragmentPresenter;
 import android.podonin.com.timemanager.view.TasksFragmentView;
-import android.podonin.com.timemanager.adapter.RvTasksAdapter;
-import android.podonin.com.timemanager.calendarwidget.EventCalendarView;
-import android.podonin.com.timemanager.model.TimeTask;
-import android.podonin.com.timemanager.repository.RealmHelper;
 import android.podonin.com.timemanager.view.activity.ContainerActivity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -73,7 +73,7 @@ public class TasksFragment extends Fragment
         mRecyclerView.setAdapter(mTasksAdapter);
 
         mFragmentPresenter = new TasksFragmentPresenter(this);
-        mFragmentPresenter.dispatchCreate();
+        mFragmentPresenter.dispatchCreate(mCalendarView.getSelectedDay());
 
         mCalendarView.setOnChangeListener(dayMillis -> mFragmentPresenter.onSelectedDayChanged(dayMillis));
 
@@ -82,7 +82,15 @@ public class TasksFragment extends Fragment
         mTasksActionButton.setOnClickListener(v -> mFragmentPresenter.onButtonClicked());
 
         mTasksAdapter.setOnItemClickListener((v, taskId) -> mFragmentPresenter.onItemClicked(taskId));
+
+        mTasksAdapter.setOnLongItemClickListener((v, taskId) -> mFragmentPresenter.onLongItemClicked(taskId));
     }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        mFragmentPresenter.dispatchCreate(mCalendarView.getSelectedDay());
+//    }
 
     private FragmentNavigator getFragmentNavigator() {
         ContainerActivity activity = (ContainerActivity) getActivity();
@@ -97,11 +105,6 @@ public class TasksFragment extends Fragment
         mFragmentPresenter.dispatchDestroy();
         super.onDestroyView();
     }
-
-    public Context getFragmentContext(){
-        return getActivity();
-    }
-
     public void toggleCalendar() {
         mToolbarToggle.toggle();
         if(mToolbarToggle.isChecked()){
@@ -111,14 +114,31 @@ public class TasksFragment extends Fragment
         }
     }
 
-    public void showMonthInToolbar(String month){
-        mToolbarToggle.setText(month);
+    @Override
+    public void showMonthInToolbar(long dayMillis){
+        mToolbarToggle.setText(CalendarUtils.toMonthString(getContext(), dayMillis));
     }
 
+    @Override
     public void showTimeTasks(@NonNull List<TimeTask> timeTasks){
         mTasksAdapter.setData(timeTasks);
     }
 
+    @Override
+    public void showDeleteTaskDialog(String taskId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog dialog = builder.setTitle(R.string.title_delete_task_dialog)
+        .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
+            mFragmentPresenter.deleteTask(taskId);
+            dialogInterface.cancel();
+        })
+        .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+        .create();
+
+        dialog.show();
+    }
+
+    @Override
     public void goToTaskEditPage(String taskId){
         mFragmentNavigator.showTaskEditFragment(taskId);
     }

@@ -1,5 +1,6 @@
 package android.podonin.com.timemanager.presenter;
 
+import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
@@ -46,7 +47,7 @@ public class ContainerActivityPresenter {
 
         for (Subcategory sc: mRealmHelper.getAll(Subcategory.class)) {
             TimeTask timeTask = new TimeTask();
-            timeTask.setStartDate(Calendar.getInstance().getTimeInMillis());
+            timeTask.setStartDate(CalendarUtils.today());
             timeTask.setTaskBody(sc.getName());
             mRealmHelper.insert(timeTask);
             TaskSubcategoryEfficiency subcategoryEfficiency = new TaskSubcategoryEfficiency(timeTask, sc);

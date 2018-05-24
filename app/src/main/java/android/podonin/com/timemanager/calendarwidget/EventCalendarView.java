@@ -22,6 +22,10 @@ public class EventCalendarView extends ViewPager {
 
     private OnChangeListener mListener;
 
+    public long getSelectedDay() {
+        return mPagerAdapter.getSelectedDayMillis();
+    }
+
     public interface OnChangeListener{
         void onSelectedDayChange(long dayMillis);
     }

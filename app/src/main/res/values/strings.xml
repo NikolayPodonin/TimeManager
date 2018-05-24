@@ -16,4 +16,8 @@
     <string name="empty_body_message">Заполните тело задачи</string>
     <string name="changes_not_saved">Изменения не сохранены</string>
     <string name="empty" />
+    <string name="title_delete_task_dialog">Удалить задание?</string>
+    <string name="title_delete_subcategory_dialog">Удалить подкатегорию?</string>
+    <string name="add_subcategory">Добавить подкатегорию</string>
+    <string name="title_add_subcategory_dialog">Введите имя подкатегории</string>
 </resources>

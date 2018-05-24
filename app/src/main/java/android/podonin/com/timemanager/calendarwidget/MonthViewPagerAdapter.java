@@ -110,6 +110,10 @@ class MonthViewPagerAdapter extends PagerAdapter{
         }
     }
 
+    public long getSelectedDayMillis() {
+        return mSelectedDayMillis;
+    }
+
     public long getMonth(int position) {
         return mMonths.get(position);
     }

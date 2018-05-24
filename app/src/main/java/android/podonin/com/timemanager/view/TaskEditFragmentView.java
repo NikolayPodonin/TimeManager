@@ -9,7 +9,11 @@ import java.util.List;
 public interface TaskEditFragmentView {
     void setSubcategoriesVisibility(boolean visibility);
 
-    void showSubcategories(List<Subcategory> subcategories, List<TaskSubcategoryEfficiency> efficiencies);
+    void showDeleteSubcategoryDialog(String taskId);
+
+    void showDatePickerDialog();
+
+    void showSubcategories(Category category, List<Subcategory> subcategories, List<TaskSubcategoryEfficiency> efficiencies);
 
     void showTaskBody(String taskBody);
 
@@ -26,4 +30,6 @@ public interface TaskEditFragmentView {
     void checkSomeChanges();
 
     void showMessage(int message);
+
+    void showAddSubcategoryDialog();
 }
