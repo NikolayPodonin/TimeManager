@@ -20,4 +20,6 @@
     <string name="title_delete_subcategory_dialog">Удалить подкатегорию?</string>
     <string name="add_subcategory">Добавить подкатегорию</string>
     <string name="title_add_subcategory_dialog">Введите имя подкатегории</string>
+    <string name="full_diagram">Полная диаграмма</string>
+    <string name="tasks">Задачи</string>
 </resources>

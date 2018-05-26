@@ -1,15 +1,11 @@
 package android.podonin.com.timemanager.presenter;
 
-import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
-import android.podonin.com.timemanager.calendarwidget.EventCalendarView;
+import android.podonin.com.timemanager.widgets.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.repository.RealmHelper;
 import android.podonin.com.timemanager.view.TasksFragmentView;
-import android.podonin.com.timemanager.adapter.RvTasksAdapter;
-import android.podonin.com.timemanager.view.fragment.TasksFragment;
 import android.support.annotation.NonNull;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;

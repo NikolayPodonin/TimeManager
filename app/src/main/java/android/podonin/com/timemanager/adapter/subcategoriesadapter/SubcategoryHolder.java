@@ -23,6 +23,7 @@ class SubcategoryHolder extends RecyclerView.ViewHolder{
         super(itemView);
         mSubcategoryName = itemView.findViewById(R.id.subcategory_name_text_view);
         mEfficiencySeekBar = itemView.findViewById(R.id.efficiency_seek_bar);
+        mEfficiencySeekBar.setProgress(0);
         mIsAddedToTask = itemView.findViewById(R.id.is_added_check_box);
         mLayout = itemView.findViewById(R.id.subcategory_efficiency_layout);
     }
@@ -33,7 +34,9 @@ class SubcategoryHolder extends RecyclerView.ViewHolder{
 
         mTseState = tseState;
         mEfficiencySeekBar.setVisibility(View.GONE);
-
+        if (tseState.getTse() != null){
+            mEfficiencySeekBar.setProgress(tseState.getEfficiencyInt());
+        }
 
         mLayout.setOnLongClickListener(v -> {
             if (onLongItemClickListener != null) {

@@ -4,8 +4,8 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.podonin.com.timemanager.R;
 import android.podonin.com.timemanager.adapter.RvTasksAdapter;
-import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
-import android.podonin.com.timemanager.calendarwidget.EventCalendarView;
+import android.podonin.com.timemanager.widgets.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.widgets.calendarwidget.EventCalendarView;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.navigation.FragmentNavigator;
 import android.podonin.com.timemanager.presenter.TasksFragmentPresenter;
@@ -86,11 +86,11 @@ public class TasksFragment extends Fragment
         mTasksAdapter.setOnLongItemClickListener((v, taskId) -> mFragmentPresenter.onLongItemClicked(taskId));
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        mFragmentPresenter.dispatchCreate(mCalendarView.getSelectedDay());
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFragmentPresenter.dispatchCreate(mCalendarView.getSelectedDay());
+    }
 
     private FragmentNavigator getFragmentNavigator() {
         ContainerActivity activity = (ContainerActivity) getActivity();

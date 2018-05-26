@@ -3,7 +3,9 @@ package android.podonin.com.timemanager.adapter;
 import android.content.Context;
 import android.os.Build;
 import android.podonin.com.timemanager.R;
-import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.model.Category;
+import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
+import android.podonin.com.timemanager.widgets.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHolder> {
@@ -77,15 +78,21 @@ public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHol
         private TimeTask mTimeTask;
         private TextView mBodyView;
         private TextView mDateView;
-        private TextView mEfficiencyView;
         private View mItemLayout;
+        private View mBodyLine;
+        private View mBusinessLine;
+        private View mSpiritLine;
+        private View mRelationLine;
 
         TasksHolder(@NonNull View itemView) {
             super(itemView);
             mBodyView = itemView.findViewById(R.id.task_body);
             mDateView = itemView.findViewById(R.id.task_date);
-            mEfficiencyView = itemView.findViewById(R.id.efficiency);
             mItemLayout = itemView.findViewById(R.id.item_liner_layout);
+            mBodyLine = itemView.findViewById(R.id.body_line);
+            mBusinessLine = itemView.findViewById(R.id.business_line);
+            mSpiritLine = itemView.findViewById(R.id.spirit_line);
+            mRelationLine = itemView.findViewById(R.id.relation_line);
         }
 
         void bind(@NonNull final TimeTask timeTask){
@@ -103,10 +110,7 @@ public class RvTasksAdapter extends RecyclerView.Adapter<RvTasksAdapter.TasksHol
             });
             mBodyView.setText(mTimeTask.getTaskBody());
             mDateView.setText(CalendarUtils.toDateString(getContext(), mTimeTask.getStartDate()));
-            if (mTimeTask.getSubcategoryEfficiencies() != null && mTimeTask.getSubcategoryEfficiencies().size() != 0 && mTimeTask.getSubcategoryEfficiencies().first().getEfficiency() != null) {
-                mEfficiencyView.setText(mTimeTask.getSubcategoryEfficiencies().first().getEfficiency().toString());
-            }
-        }
+    }
 
         public Context getContext() {
             return mItemLayout != null ? mItemLayout.getContext() : null;

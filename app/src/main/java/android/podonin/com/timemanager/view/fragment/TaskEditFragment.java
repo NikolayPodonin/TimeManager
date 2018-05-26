@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.podonin.com.timemanager.R;
 import android.podonin.com.timemanager.adapter.categoriesadapter.RvCategoriesAdapter;
 import android.podonin.com.timemanager.adapter.subcategoriesadapter.RvSubcategoryAdapter;
-import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
-import android.podonin.com.timemanager.measuredrecyclerviewvidget.MeasuredRecyclerView;
+import android.podonin.com.timemanager.widgets.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.widgets.measuredrecyclerviewwidget.MeasuredRecyclerView;
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
@@ -33,7 +33,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 

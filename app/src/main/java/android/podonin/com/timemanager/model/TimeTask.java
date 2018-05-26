@@ -1,9 +1,5 @@
 package android.podonin.com.timemanager.model;
 
-import java.time.Period;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import io.realm.RealmList;
@@ -20,6 +16,7 @@ public class TimeTask extends RealmObject{
     public static final String TASK_BODY_FIELD = "mTaskBody";
     public static final String START_DATE_FIELD = "mStartDate";
     public static final String SUBCATEGORY_EFFICIENCIES_FIELD = "mSubcategoryEfficiencies";
+    public static final String IS_DONE_FIELD = "mIsDone";
 
     @PrimaryKey
     @Required
@@ -27,7 +24,7 @@ public class TimeTask extends RealmObject{
     private String mTaskBody;
     private long mStartDate;
     private RealmList<TaskSubcategoryEfficiency> mSubcategoryEfficiencies = new RealmList<>();
-    private boolean mDone;
+    private boolean mIsDone;
 
     public TimeTask() {
         mTaskId = UUID.randomUUID().toString();
@@ -58,11 +55,11 @@ public class TimeTask extends RealmObject{
     }
 
     public boolean isDone() {
-        return mDone;
+        return mIsDone;
     }
 
     public void setDone(boolean done) {
-        mDone = done;
+        mIsDone = done;
     }
 
     public RealmList<TaskSubcategoryEfficiency> getSubcategoryEfficiencies() {

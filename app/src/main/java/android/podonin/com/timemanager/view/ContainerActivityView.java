@@ -1,5 +1,7 @@
 package android.podonin.com.timemanager.view;
 
-public interface ActivityView {
+public interface ContainerActivityView {
     void showTasksFragment();
+
+    void showDiagramFragment();
 }

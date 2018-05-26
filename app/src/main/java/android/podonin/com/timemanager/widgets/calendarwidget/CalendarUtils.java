@@ -1,13 +1,11 @@
-package android.podonin.com.timemanager.calendarwidget;
+package android.podonin.com.timemanager.widgets.calendarwidget;
 
 import android.content.Context;
 import android.support.v4.util.Pools;
 import android.text.format.DateUtils;
-import android.text.style.TtsSpan;
 
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;

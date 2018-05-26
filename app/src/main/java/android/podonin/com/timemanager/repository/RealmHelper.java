@@ -1,8 +1,5 @@
 package android.podonin.com.timemanager.repository;
 
-import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
-import android.podonin.com.timemanager.model.Subcategory;
-import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.support.annotation.NonNull;
 
@@ -64,6 +61,11 @@ public class RealmHelper {
         return mRealm.copyFromRealm(results);
     }
 
+    public <R extends RealmObject> List<R> getAll(Class<R> rClass, @NonNull String key, @NonNull boolean value){
+        RealmResults<R> results = mRealm.where(rClass).equalTo(key, value).findAll();
+        return mRealm.copyFromRealm(results);
+    }
+
     /**
      * Returns typed RealmObject. Need if you are often write and reed only one exemplar of type
      *
@@ -119,4 +121,5 @@ public class RealmHelper {
             e.printStackTrace();
         }
     }
+
 }

@@ -2,6 +2,7 @@ package android.podonin.com.timemanager.navigation;
 
 import android.content.Context;
 import android.podonin.com.timemanager.R;
+import android.podonin.com.timemanager.view.fragment.DiagramFragment;
 import android.podonin.com.timemanager.view.fragment.TaskEditFragment;
 import android.podonin.com.timemanager.view.fragment.TasksFragment;
 import android.support.annotation.NonNull;
@@ -57,6 +58,10 @@ public class FragmentNavigator {
 
     public void showTasksFragment(){
         showFragment(TasksFragment.newInstance());
+    }
+
+    public void showDiagramFragment(){
+        showFragment(DiagramFragment.newInstance());
     }
 
     public void showTaskEditFragment(String taskId){

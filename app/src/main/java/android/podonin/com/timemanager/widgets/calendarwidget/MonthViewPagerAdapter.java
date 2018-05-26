@@ -1,13 +1,11 @@
-package android.podonin.com.timemanager.calendarwidget;
+package android.podonin.com.timemanager.widgets.calendarwidget;
 
-import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.ArrayMap;
 import android.view.View;
 import android.view.ViewGroup;
 

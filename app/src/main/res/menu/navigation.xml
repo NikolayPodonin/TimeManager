@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/tasks_menu_item"
+          android:icon="@drawable/ic_tasks_list_black_24dp"
+          android:title="@string/tasks"
+        />
+    <item android:id="@+id/diagram_menu_item"
+          android:icon="@drawable/ic_pie_chart_black_24dp"
+          android:title="@string/full_diagram"
+        />
+</menu>

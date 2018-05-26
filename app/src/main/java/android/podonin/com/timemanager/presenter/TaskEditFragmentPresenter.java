@@ -1,7 +1,7 @@
 package android.podonin.com.timemanager.presenter;
 
 import android.podonin.com.timemanager.R;
-import android.podonin.com.timemanager.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.widgets.calendarwidget.CalendarUtils;
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
