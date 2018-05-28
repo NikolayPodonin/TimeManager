@@ -1,6 +1,7 @@
 package android.podonin.com.timemanager.widgets.calendarwidget;
 
 import android.content.Context;
+import android.podonin.com.timemanager.utilites.CalendarUtils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -9,6 +10,9 @@ import android.view.View;
 
 public class EventCalendarView extends ViewPager {
 
+    public interface OnTopScrollListener {
+        void onTopScroll(float distance);
+    }
 
     private MonthViewPagerAdapter mPagerAdapter;
     private final MonthView.OnDateChangeListener mDateChangeListener =
@@ -34,6 +38,9 @@ public class EventCalendarView extends ViewPager {
         mListener = listener;
     }
 
+    public void setOnTopFlingListener(OnTopScrollListener listener) {
+        mPagerAdapter.setOnTopScrollListener(listener);
+    }
 
     public EventCalendarView(@NonNull Context context) {
         this(context, null);
@@ -61,7 +68,7 @@ public class EventCalendarView extends ViewPager {
         setAdapter(mPagerAdapter);
         setCurrentItem(mPagerAdapter.getCount() / 2);
         addOnPageChangeListener(new SimpleOnPageChangeListener(){
-            public boolean mDragging = false; //indicate if page change is from user
+            boolean mDragging = false; //indicate if page change is from user
 
             @Override
             public void onPageSelected(int position) {

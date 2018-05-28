@@ -32,15 +32,14 @@ public class DiagramFragment extends Fragment
 
     private DiagramFragmentPresenter mPresenter;
     private DiagramPagerAdapter mDiagramPagerAdapter;
-    private ViewPager mViewPager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_diagram, container, false);
-        mViewPager = view.findViewById(R.id.view_pager);
+        ViewPager viewPager = view.findViewById(R.id.view_pager);
         mDiagramPagerAdapter = new DiagramPagerAdapter();
-        mViewPager.setAdapter(mDiagramPagerAdapter);
+        viewPager.setAdapter(mDiagramPagerAdapter);
         return view;
     }
 
@@ -61,13 +60,15 @@ public class DiagramFragment extends Fragment
     }
 
     @Override
-    public void setData(@NonNull float[] values, @NonNull int[] stringResIds, @NonNull int[] colors) {
+    public void setData(float[] values, int[] stringResIds,
+                        int[] colors, int labelResId, int descriptionResId, boolean anabelPercent) {
 
         ArrayList<String> labels = new ArrayList<>();
         for (int resId : stringResIds){
             labels.add(getString(resId));
         }
 
-        mDiagramPagerAdapter.setData(values, labels, colors);
+        mDiagramPagerAdapter.setData(values, labels, colors, "/" + getString(labelResId),
+                getString(descriptionResId), anabelPercent);
     }
 }

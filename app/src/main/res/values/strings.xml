@@ -22,4 +22,13 @@
     <string name="title_add_subcategory_dialog">Введите имя подкатегории</string>
     <string name="full_diagram">Полная диаграмма</string>
     <string name="tasks">Задачи</string>
+    <string name="categories">Категории</string>
+    <string name="body_first_subcategory">Здоровье</string>
+    <string name="business_first_subcategory">Работа</string>
+    <string name="spirit_first_subcategory">Хобби</string>
+    <string name="relationships_first_subcategory">Семья</string>
+    <string name="task_first_name">Установить Well Balanced Life</string>
+    <string name="first_diagram_description">Баланс дел по общему количеству</string>
+    <string name="second_diagram_description">Средние значения эффективности</string>
+    <string name="third_diagram_description">Баланс дел по общей эффективности</string>
 </resources>

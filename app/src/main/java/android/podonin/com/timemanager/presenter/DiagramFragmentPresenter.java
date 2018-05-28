@@ -64,12 +64,17 @@ public class DiagramFragmentPresenter {
         float spirit = 0;
         float relation = 0;
 
+        int resId = 0;
+        boolean usePercent = false;
+
         switch (page) {
             case 0:
                 body = mBody.size();
                 business = mBusiness.size();
                 spirit = mSpirit.size();
                 relation = mRelation.size();
+                resId = R.string.first_diagram_description;
+                usePercent = true;
                 break;
             case 1:
                 for (TaskSubcategoryEfficiency tse : mBody) {
@@ -84,36 +89,41 @@ public class DiagramFragmentPresenter {
                 for (TaskSubcategoryEfficiency tse : mRelation) {
                     relation += tse.getEfficiency().ordinal();
                 }
+                resId = R.string.second_diagram_description;
+                usePercent = false;
                 break;
             case 2:
-                for (TaskSubcategoryEfficiency tse : mBody) {
-                    body += tse.getEfficiency().ordinal();
-                }
-                if (body != 0){
+                if (mBody.size() != 0){
+                    for (TaskSubcategoryEfficiency tse : mBody) {
+                        body += tse.getEfficiency().ordinal();
+                    }
                     body = body / mBody.size();
                 }
-                for (TaskSubcategoryEfficiency tse : mBusiness) {
-                    business += tse.getEfficiency().ordinal();
-                }
-                if (business != 0) {
+                if (mBusiness.size() != 0) {
+                    for (TaskSubcategoryEfficiency tse : mBusiness) {
+                        business += tse.getEfficiency().ordinal();
+                    }
                     business = business / mBusiness.size();
                 }
-                for (TaskSubcategoryEfficiency tse : mSpirit) {
-                    spirit += tse.getEfficiency().ordinal();
-                }
-                if (spirit != 0) {
+                if (mSpirit.size() != 0) {
+                    for (TaskSubcategoryEfficiency tse : mSpirit) {
+                        spirit += tse.getEfficiency().ordinal();
+                    }
                     spirit = spirit / mSpirit.size();
                 }
-                for (TaskSubcategoryEfficiency tse : mRelation) {
-                    relation += tse.getEfficiency().ordinal();
-                }
-                if (relation != 0) {
+                if (mRelation.size() != 0) {
+                    for (TaskSubcategoryEfficiency tse : mRelation) {
+                        relation += tse.getEfficiency().ordinal();
+                    }
                     relation = relation / mRelation.size();
                 }
+                resId = R.string.third_diagram_description;
+                usePercent = true;
                 break;
+            default:
         }
 
         float values[] = {body, business, spirit, relation};
-        mLayoutView.setData(values, mStringResId, mColors);
+        mLayoutView.setData(values, mStringResId, mColors, R.string.categories, resId, usePercent);
     }
 }

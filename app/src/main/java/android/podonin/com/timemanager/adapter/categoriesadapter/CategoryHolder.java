@@ -12,7 +12,7 @@ class CategoryHolder extends RecyclerView.ViewHolder implements RvCategoriesAdap
 
     private TextView mTextView;
     private ImageButton mImageButton;
-    private CategoryDraws mCategoryDraws;
+    private RvCategoriesAdapter.CategoryDraws mCategoryDraws;
     private int mPosition;
 
     public CategoryHolder(@NonNull View itemView) {
@@ -21,7 +21,7 @@ class CategoryHolder extends RecyclerView.ViewHolder implements RvCategoriesAdap
         mTextView = itemView.findViewById(R.id.category_text_view);
     }
 
-    public void bind(CategoryDraws categoryDraws, int position, final ActivePositionSetter setter){
+    public void bind(RvCategoriesAdapter.CategoryDraws categoryDraws, int position, final ActivePositionSetter setter){
         mCategoryDraws = categoryDraws;
         mPosition = position;
         mImageButton.setImageResource(mCategoryDraws.getBlackDraw());

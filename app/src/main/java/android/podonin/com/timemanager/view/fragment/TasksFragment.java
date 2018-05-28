@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.podonin.com.timemanager.R;
 import android.podonin.com.timemanager.adapter.RvTasksAdapter;
-import android.podonin.com.timemanager.widgets.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.utilites.CalendarUtils;
 import android.podonin.com.timemanager.widgets.calendarwidget.EventCalendarView;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.navigation.FragmentNavigator;
@@ -76,6 +76,12 @@ public class TasksFragment extends Fragment
         mFragmentPresenter.dispatchCreate(mCalendarView.getSelectedDay());
 
         mCalendarView.setOnChangeListener(dayMillis -> mFragmentPresenter.onSelectedDayChanged(dayMillis));
+        mCalendarView.setOnTopFlingListener(((distance) -> {
+            float dist = mCalendarView.getHeight() / 5;
+            if (distance > dist){
+                mFragmentPresenter.onTopFlingCalendar();
+            }
+        }));
 
         mToolbarToggleFrame.setOnClickListener(v -> mFragmentPresenter.onToggleClicked());
 
@@ -115,8 +121,8 @@ public class TasksFragment extends Fragment
     }
 
     @Override
-    public void showMonthInToolbar(long dayMillis){
-        mToolbarToggle.setText(CalendarUtils.toMonthString(getContext(), dayMillis));
+    public void showDayOfMonthInToolbar(long dayMillis){
+        mToolbarToggle.setText(CalendarUtils.toDateString(getContext(), dayMillis));
     }
 
     @Override

@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.podonin.com.timemanager.R;
 import android.podonin.com.timemanager.adapter.categoriesadapter.RvCategoriesAdapter;
 import android.podonin.com.timemanager.adapter.subcategoriesadapter.RvSubcategoryAdapter;
-import android.podonin.com.timemanager.widgets.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.utilites.CalendarUtils;
 import android.podonin.com.timemanager.widgets.measuredrecyclerviewwidget.MeasuredRecyclerView;
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
@@ -154,7 +154,9 @@ public class TaskEditFragment extends Fragment
     @SuppressLint("ShowToast")
     @Override
     public void showMessage(int message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        if (message != 0) {
+            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

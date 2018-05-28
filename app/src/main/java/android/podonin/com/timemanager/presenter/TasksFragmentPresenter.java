@@ -1,6 +1,6 @@
 package android.podonin.com.timemanager.presenter;
 
-import android.podonin.com.timemanager.widgets.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.utilites.CalendarUtils;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.repository.RealmHelper;
@@ -38,7 +38,7 @@ public class TasksFragmentPresenter {
 
     private void showTasksPerDay(long dayMillis) {
         mSelectedDay = dayMillis;
-        mTasksFragmentView.showMonthInToolbar(mSelectedDay);
+        mTasksFragmentView.showDayOfMonthInToolbar(mSelectedDay);
         mTimeTasks.clear();
         mTimeTasks.addAll(mRealmHelper.getAll(TimeTask.class, TimeTask.START_DATE_FIELD, mSelectedDay));
         mTasksFragmentView.showTimeTasks(mTimeTasks);
@@ -80,5 +80,9 @@ public class TasksFragmentPresenter {
         mTimeTasks.clear();
         mTimeTasks.addAll(mRealmHelper.getAll(TimeTask.class, TimeTask.START_DATE_FIELD, mSelectedDay));
         mTasksFragmentView.showTimeTasks(mTimeTasks);
+    }
+
+    public void onTopFlingCalendar() {
+        onToggleClicked();
     }
 }

@@ -11,7 +11,7 @@ public interface TasksFragmentView {
 
     void showTimeTasks(@NonNull List<TimeTask> timeTasks);
 
-    void showMonthInToolbar(long dayMillis);
+    void showDayOfMonthInToolbar(long dayMillis);
 
     void toggleCalendar();
 

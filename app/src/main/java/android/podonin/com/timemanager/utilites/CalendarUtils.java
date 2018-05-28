@@ -1,4 +1,4 @@
-package android.podonin.com.timemanager.widgets.calendarwidget;
+package android.podonin.com.timemanager.utilites;
 
 import android.content.Context;
 import android.support.v4.util.Pools;
@@ -16,7 +16,7 @@ public class CalendarUtils {
     /**
      * Constant value for a 'no time' timestamp
      */
-    static final long NO_TIME_MILLIS = -1;
+    public static final long NO_TIME_MILLIS = -1;
 
     private static final String TIMEZONE_UTC = "UTC";
 
@@ -134,7 +134,7 @@ public class CalendarUtils {
 
     public static String toMonthString(Context context, long timeMillis) {
         return DateUtils.formatDateRange(context, timeMillis, timeMillis,
-                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY | DateUtils.FORMAT_SHOW_YEAR);
+                DateUtils.FORMAT_SHOW_DATE  | DateUtils.FORMAT_NO_MONTH_DAY | DateUtils.FORMAT_SHOW_YEAR);
     }
 
     public static String toDateString(Context context, long dateMillis) {

@@ -2,15 +2,19 @@ package android.podonin.com.timemanager.widgets.calendarwidget;
 
 import android.content.Context;
 import android.podonin.com.timemanager.R;
+import android.podonin.com.timemanager.utilites.CalendarUtils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -20,6 +24,9 @@ import java.util.Calendar;
 
 public class MonthView extends RecyclerView{
 
+    private GestureDetectorCompat mGestureDetectorCompat;
+    private EventCalendarView.OnTopScrollListener mOnTopScrollListener;
+
     private static final int SPANS_COUNT = 7; // days in week
     private long mMonthMillis;
     private GridAdapter mAdapter;
@@ -27,6 +34,10 @@ public class MonthView extends RecyclerView{
 
     interface OnDateChangeListener {
         void onSelectedDayChange(long dayMillis);
+    }
+
+    public void setOnTopScrollListener(EventCalendarView.OnTopScrollListener onTopScrollListener) {
+        mOnTopScrollListener = onTopScrollListener;
     }
 
     public void setOnDateChangeListener(OnDateChangeListener listener) {
@@ -47,6 +58,7 @@ public class MonthView extends RecyclerView{
     }
 
     private void init() {
+        mGestureDetectorCompat = new GestureDetectorCompat(getContext(), new OnTopFlingGestureListener());
         setLayoutManager(new GridLayoutManager(getContext(), SPANS_COUNT));
         setHasFixedSize(true);
         setCalendar(CalendarUtils.today());
@@ -86,12 +98,17 @@ public class MonthView extends RecyclerView{
         } else {
             mAdapter.setSelectedDay(CalendarUtils.NO_TIME_MILLIS);
         }
+    }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        this.mGestureDetectorCompat.onTouchEvent(ev);
+        return super.onTouchEvent(ev);
     }
 
     private static abstract class CellViewHolder extends RecyclerView.ViewHolder{
 
-        public CellViewHolder(View itemView) {
+        CellViewHolder(View itemView) {
             super(itemView);
         }
     }
@@ -99,7 +116,7 @@ public class MonthView extends RecyclerView{
     private static class HeaderViewHolder extends CellViewHolder{
         private final TextView mTextView;
 
-        public HeaderViewHolder(View itemView) {
+        HeaderViewHolder(View itemView) {
             super(itemView);
             mTextView = (TextView) itemView;
         }
@@ -108,7 +125,7 @@ public class MonthView extends RecyclerView{
     private static class ContentViewHolder extends CellViewHolder{
         private final TextView mTextView;
 
-        public ContentViewHolder(View itemView) {
+        ContentViewHolder(View itemView) {
             super(itemView);
             mTextView = (TextView) itemView;
         }
@@ -117,7 +134,7 @@ public class MonthView extends RecyclerView{
     private static class SelectionPayload {
         private final long mTimeMillis;
 
-        public SelectionPayload(long timeMillis) {
+        SelectionPayload(long timeMillis) {
             this.mTimeMillis = timeMillis;
         }
     }
@@ -131,7 +148,7 @@ public class MonthView extends RecyclerView{
         private final int mDays;
         private int mSelectedPosition = -1;
 
-        public GridAdapter(long monthMillis) {
+        GridAdapter(long monthMillis) {
             mWeekDays = DateFormatSymbols.getInstance().getShortWeekdays();
             mBaseTimeMillis = CalendarUtils.monthFirstDay(monthMillis);
             mStartOffset = CalendarUtils.monthFirstDayOffset(mBaseTimeMillis) + SPANS_COUNT;
@@ -183,12 +200,7 @@ public class MonthView extends RecyclerView{
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     textView.setText(spannable, TextView.BufferType.SPANNABLE);
-                    textView.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            setSelectedPosition(adapterPosition, true);
-                        }
-                    });
+                    textView.setOnClickListener(v -> setSelectedPosition(adapterPosition, true));
                 }
             }
         }
@@ -222,11 +234,27 @@ public class MonthView extends RecyclerView{
         }
 
 
-        public void setSelectedDay(long dayMillis) {
+        void setSelectedDay(long dayMillis) {
             setSelectedPosition(CalendarUtils.isNotTime(dayMillis) ? -1 :
                     mStartOffset + CalendarUtils.dayOfMonth(dayMillis) - 1, false);
         }
     }
 
+    private class OnTopFlingGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
 
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (Math.abs(distanceY) > Math.abs(distanceX) && distanceY < 0){
+                if (mOnTopScrollListener != null){
+                    mOnTopScrollListener.onTopScroll(Math.abs(distanceY));
+                }
+                return true;
+            }
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+    }
 }

@@ -2,6 +2,7 @@ package android.podonin.com.timemanager.widgets.calendarwidget;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.podonin.com.timemanager.utilites.CalendarUtils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
@@ -21,8 +22,13 @@ class MonthViewPagerAdapter extends PagerAdapter{
     private final List<Long> mMonths = new ArrayList<>(getCount());
     final List<MonthView> mViews = new ArrayList<>(getCount());
     private long mSelectedDayMillis = CalendarUtils.today();
+    private EventCalendarView.OnTopScrollListener mOnTopScrollListener;
 
-    public MonthViewPagerAdapter(long dayMillis, MonthView.OnDateChangeListener listener) {
+    public void setOnTopScrollListener(EventCalendarView.OnTopScrollListener onTopScrollListener) {
+        mOnTopScrollListener = onTopScrollListener;
+    }
+
+    MonthViewPagerAdapter(long dayMillis, MonthView.OnDateChangeListener listener) {
         mListener = listener;
         int mid = ITEM_COUNT / 2;
         for (int i = 0; i < getCount(); i++){
@@ -47,6 +53,7 @@ class MonthViewPagerAdapter extends PagerAdapter{
         MonthView view = new MonthView(container.getContext());
         view.setLayoutParams(new ViewPager.LayoutParams());
         view.setOnDateChangeListener(mListener);
+        view.setOnTopScrollListener(mOnTopScrollListener);
         mViews.set(position, view);
         container.addView(view); //views are not added in same order as adapter items
         bind(position);

@@ -1,7 +1,7 @@
 package android.podonin.com.timemanager.presenter;
 
 import android.podonin.com.timemanager.R;
-import android.podonin.com.timemanager.widgets.calendarwidget.CalendarUtils;
+import android.podonin.com.timemanager.utilites.CalendarUtils;
 import android.podonin.com.timemanager.model.Category;
 import android.podonin.com.timemanager.model.Subcategory;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
@@ -97,7 +97,7 @@ public class TaskEditFragmentPresenter {
 
     public void onExit() {
         mFragmentView.checkSomeChanges();
-        int message = R.string.empty;
+        int message = 0;
         if (mIsNeedToSave && mIsOkClosed){
                 mFragmentView.saveChanges();
                 message = R.string.changes_saved;
