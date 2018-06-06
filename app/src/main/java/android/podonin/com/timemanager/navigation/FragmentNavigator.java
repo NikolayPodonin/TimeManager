@@ -45,23 +45,53 @@ public class FragmentNavigator {
         if (fragmentManager == null) {
             return;
         }
+
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment, tag)
-                .addToBackStack(null)
+                .addToBackStack(tag)
                 .commit();
     }
 
-    public void backToPreviousFragment(){
+    private void showFragmentAsRoot(@NonNull Fragment fragment) {
+        popEveryFragmentAfter(0);
+        showFragment(fragment);
+    }
+
+    private void showFragmentAsSecond(Fragment fragment) {
+        popEveryFragmentAfter(1);
+        showFragment(fragment);
+    }
+
+    private void popEveryFragmentAfter(int value) {
+        FragmentManager manager = getFragmentManager();
+        if (manager == null){
+            return;
+        }
+        int stackCount = manager.getBackStackEntryCount();
+        for (int i = value; i < stackCount; i++) {
+            int fragId = manager.getBackStackEntryAt(i).getId();
+            manager.popBackStack(fragId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+    }
+
+    public void backToPreviousFragment() {
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.popBackStack();
+        if (fragmentManager == null) {
+            return;
+        }
+        if (fragmentManager.getBackStackEntryCount() == 1) {
+            mActivityWeakReference.get().finish();
+        } else {
+            fragmentManager.popBackStack();
+        }
     }
 
     public void showTasksFragment(){
-        showFragment(TasksFragment.newInstance());
+        showFragmentAsSecond(TasksFragment.newInstance());
     }
 
     public void showDiagramFragment(){
-        showFragment(DiagramFragment.newInstance());
+        showFragmentAsRoot(DiagramFragment.newInstance());
     }
 
     public void showTaskEditFragment(String taskId){

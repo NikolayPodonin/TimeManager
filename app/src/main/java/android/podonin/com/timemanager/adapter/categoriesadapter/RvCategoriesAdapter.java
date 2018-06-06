@@ -23,10 +23,14 @@ public class RvCategoriesAdapter extends RecyclerView.Adapter<CategoryHolder> im
     }
 
     private final ArrayList<CategoryDraws> mCategoryDraws = new ArrayList<CategoryDraws>(){{
-        add(0, new CategoryDraws(R.drawable.ic_body_black_64dp, R.drawable.ic_body_blue_64dp, R.string.body));
-        add(1, new CategoryDraws(R.drawable.ic_business_black_64dp, R.drawable.ic_business_blue_64dp, R.string.business));
-        add(2, new CategoryDraws(R.drawable.ic_spirit_black_64dp, R.drawable.ic_spirit_blue_64dp, R.string.spirit));
-        add(3, new CategoryDraws(R.drawable.ic_relationships_black_64dp, R.drawable.ic_relationships_blue_64dp, R.string.relationships));
+        add(0, new CategoryDraws(R.drawable.ic_body_black_64dp_new, R.drawable.ic_body_color_64dp,
+                R.string.body, R.color.color_body));
+        add(1, new CategoryDraws(R.drawable.ic_business_black_64dp_new, R.drawable.ic_business_color_64dp,
+                R.string.business, R.color.color_business));
+        add(2, new CategoryDraws(R.drawable.ic_spirit_black_64dp_new, R.drawable.ic_spirit_color_64dp,
+                R.string.spirit, R.color.color_spirit));
+        add(3, new CategoryDraws(R.drawable.ic_relation_black_64dp, R.drawable.ic_relation_color_64dp,
+                R.string.relationships, R.color.color_relation));
     }};
 
     private int mActivePosition = -1;
@@ -89,35 +93,31 @@ public class RvCategoriesAdapter extends RecyclerView.Adapter<CategoryHolder> im
 
     static class CategoryDraws{
         private final int mBlackDraw;
-        private final int mBlueDraw;
+        private final int mColorDraw;
         private final int mNameString;
-        private final int mBlackColor = R.color.black500;
-        private final int mBlueColor = R.color.blue500;
+        private final int mColorResource;
 
-        CategoryDraws(int blackDraw, int blueDraw, int string) {
+        CategoryDraws(int blackDraw, int blueDraw, int string, int colorResId) {
             mBlackDraw = blackDraw;
-            mBlueDraw = blueDraw;
+            mColorDraw = blueDraw;
             mNameString = string;
+            mColorResource = colorResId;
         }
 
         public int getBlackDraw() {
             return mBlackDraw;
         }
 
-        public int getBlueDraw() {
-            return mBlueDraw;
+        public int getColorDraw() {
+            return mColorDraw;
         }
 
         public int getNameString() {
             return mNameString;
         }
 
-        public int getBlackColor() {
-            return mBlackColor;
-        }
-
-        public int getBlueColor() {
-            return mBlueColor;
+        public int getColorResource() {
+            return mColorResource;
         }
     }
 }

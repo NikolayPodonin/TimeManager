@@ -5,6 +5,8 @@
         android:id="@+id/category_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:gravity="center"
         android:orientation="vertical">
         <ImageButton
             android:id="@+id/category_image_button"
@@ -12,10 +14,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@string/category"
-            tools:src="@drawable/ic_body_black_64dp"/>
+            android:background="@color/white"
+            tools:src="@drawable/ic_body_black_64dp_new"/>
         <TextView
             android:id="@+id/category_text_view"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             tools:text="@string/body"/>

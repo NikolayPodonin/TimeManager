@@ -5,6 +5,6 @@ import android.support.annotation.NonNull;
 import java.util.ArrayList;
 
 public interface DiagramFragmentView {
-    void setData(@NonNull float[] values, @NonNull int[] stringResIds, @NonNull int[] colors,
+    void setData(float[] values, int[] stringResIds, int[] colorResIds,
                  int stringResId, int descriptionResId, boolean anabelPercent);
 }

@@ -30,6 +30,7 @@ public class ContainerActivity extends AppCompatActivity implements ContainerAct
             case R.id.diagram_menu_item:
                 mLayoutPresenter.onChooseDiagramInMenu();
                 return true;
+            default:
         }
         return false;
     };
@@ -79,6 +80,11 @@ public class ContainerActivity extends AppCompatActivity implements ContainerAct
     protected void onDestroy() {
         mLayoutPresenter.dispatchDestroy();
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        mFragmentNavigator.backToPreviousFragment();
     }
 
     public FragmentNavigator getFragmentNavigator() {

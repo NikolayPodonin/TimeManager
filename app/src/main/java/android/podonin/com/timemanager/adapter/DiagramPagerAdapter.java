@@ -40,7 +40,7 @@ public class DiagramPagerAdapter extends PagerAdapter {
     }
 
     public void setData(float[] values, @NonNull ArrayList<String> labels,
-                        int[] colors, @NonNull String dataLabel, @NonNull String description, boolean anabelPercent) {
+                        @NonNull ArrayList<Integer> colors, @NonNull String dataLabel, @NonNull String description, boolean anabelPercent) {
 
         mPieChart.setUsePercentValues(anabelPercent);
         Description desc = new Description();
@@ -49,18 +49,18 @@ public class DiagramPagerAdapter extends PagerAdapter {
         mPieChart.setCenterText(generateCenterSpannableText(description));
 
         ArrayList<PieEntry> entries = new ArrayList<>();
-        ArrayList<Integer> newColors = new ArrayList<>();
         for (int i = 0; i < values.length; i++) {
             if (values[i] != 0) {
                 PieEntry entry = new PieEntry(values[i], i);
                 entry.setLabel(labels.get(i));
                 entries.add(entry);
-                newColors.add(colors[i]);
+            } else {
+                colors.remove(i);
             }
         }
 
         PieDataSet dataSet = new PieDataSet(entries, dataLabel);
-        dataSet.setColors(newColors);
+        dataSet.setColors(colors);
         dataSet.setSliceSpace(3f);
 
         PieData pieData = new PieData(dataSet);

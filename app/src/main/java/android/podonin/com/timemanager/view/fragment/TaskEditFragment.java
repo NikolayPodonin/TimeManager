@@ -27,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -73,7 +72,6 @@ public class TaskEditFragment extends Fragment
         mOkButton = view.findViewById(R.id.ok_button);
         mBackButton = view.findViewById(R.id.back_button);
         mAddSubcategoryButton = view.findViewById(R.id.add_subcategory_button);
-        mAddSubcategoryButton.setVisibility(View.GONE);
 
         mSubcategoriesRecyclerView = view.findViewById(R.id.subcategories_efficiency_recycler_view);
         mCategoriesRecyclerView = view.findViewById(R.id.category_recycler_view);
@@ -82,7 +80,6 @@ public class TaskEditFragment extends Fragment
         mDate = view.findViewById(R.id.task_date_edit);
         mDone = view.findViewById(R.id.done_check_box);
         mDividerView = view.findViewById(R.id.horizontal_divider_2);
-        mDividerView.setVisibility(View.GONE);
 
         return view;
     }
@@ -128,6 +125,9 @@ public class TaskEditFragment extends Fragment
         mBackButton.setOnClickListener(v -> mPresenter.onBackExit());
 
         mAddSubcategoryButton.setOnClickListener(v -> mPresenter.onAddSubcategoryClick());
+
+        mAddSubcategoryButton.setVisibility(View.GONE);
+        mDividerView.setVisibility(View.GONE);
     }
 
     private FragmentNavigator getFragmentNavigator() {
@@ -217,14 +217,11 @@ public class TaskEditFragment extends Fragment
     @Override
     public void showDatePickerDialog() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            DatePickerDialog dialog = new DatePickerDialog(getActivity());
-            dialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                    mPresenter.onDateChoose(i, i1, i2);
-                }
-            });
-            dialog.show();
+            if (getActivity() != null) {
+                DatePickerDialog dialog = new DatePickerDialog(getActivity());
+                dialog.setOnDateSetListener((datePicker, i, i1, i2) -> mPresenter.onDateChoose(i, i1, i2));
+                dialog.show();
+            }
         }
     }
 

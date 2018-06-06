@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TimeManager</string>
+    <string name="app_name">BalancedLife</string>
     <string name="body">Тело</string>
     <string name="business">Дело</string>
     <string name="spirit">Душа</string>
@@ -27,7 +27,7 @@
     <string name="business_first_subcategory">Работа</string>
     <string name="spirit_first_subcategory">Хобби</string>
     <string name="relationships_first_subcategory">Семья</string>
-    <string name="task_first_name">Установить Well Balanced Life</string>
+    <string name="task_first_name">Установить BalancedLife</string>
     <string name="first_diagram_description">Баланс дел по общему количеству</string>
     <string name="second_diagram_description">Средние значения эффективности</string>
     <string name="third_diagram_description">Баланс дел по общей эффективности</string>

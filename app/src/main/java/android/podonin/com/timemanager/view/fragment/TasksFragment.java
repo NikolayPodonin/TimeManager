@@ -66,7 +66,7 @@ public class TasksFragment extends Fragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mFragmentNavigator = getFragmentNavigator();;
+        mFragmentNavigator = getFragmentNavigator();
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mTasksAdapter = new RvTasksAdapter();

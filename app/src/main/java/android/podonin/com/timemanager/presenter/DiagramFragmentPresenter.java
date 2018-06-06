@@ -2,7 +2,6 @@ package android.podonin.com.timemanager.presenter;
 
 import android.graphics.Color;
 import android.podonin.com.timemanager.R;
-import android.podonin.com.timemanager.model.Efficiency;
 import android.podonin.com.timemanager.model.TaskSubcategoryEfficiency;
 import android.podonin.com.timemanager.model.TimeTask;
 import android.podonin.com.timemanager.repository.RealmHelper;
@@ -12,8 +11,6 @@ import android.support.annotation.NonNull;
 import java.util.ArrayList;
 
 public class DiagramFragmentPresenter {
-    private enum KindOfDiagram { amountTasks, amountEfficiency, averageEfficiency}
-
     @NonNull
     private DiagramFragmentView mLayoutView;
     private final RealmHelper mRealmHelper;
@@ -24,7 +21,7 @@ public class DiagramFragmentPresenter {
     private ArrayList<TaskSubcategoryEfficiency> mRelation = new ArrayList<>();
 
     private int mStringResId[] = { R.string.body, R.string.business, R.string.spirit, R.string.relationships };
-    private int mColors[] = { Color.GREEN, Color.YELLOW, Color.BLUE, Color.RED };
+    private int mColorResIds[] = { R.color.color_body, R.color.color_business, R.color.color_spirit, R.color.color_relation};
 
     public DiagramFragmentPresenter(@NonNull DiagramFragmentView view){
         mLayoutView = view;
@@ -50,6 +47,7 @@ public class DiagramFragmentPresenter {
                     break;
                 case Relationships:
                     mRelation.add(efficiency);
+                default:
             }
         }
     }
@@ -89,8 +87,8 @@ public class DiagramFragmentPresenter {
                 for (TaskSubcategoryEfficiency tse : mRelation) {
                     relation += tse.getEfficiency().ordinal();
                 }
-                resId = R.string.second_diagram_description;
-                usePercent = false;
+                resId = R.string.third_diagram_description;
+                usePercent = true;
                 break;
             case 2:
                 if (mBody.size() != 0){
@@ -117,13 +115,13 @@ public class DiagramFragmentPresenter {
                     }
                     relation = relation / mRelation.size();
                 }
-                resId = R.string.third_diagram_description;
-                usePercent = true;
+                resId = R.string.second_diagram_description;
+                usePercent = false;
                 break;
             default:
         }
 
         float values[] = {body, business, spirit, relation};
-        mLayoutView.setData(values, mStringResId, mColors, R.string.categories, resId, usePercent);
+        mLayoutView.setData(values, mStringResId, mColorResIds, R.string.categories, resId, usePercent);
     }
 }
