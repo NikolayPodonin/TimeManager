@@ -2,13 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'PodoninAppsKey'
-            keyPassword '5ZalnqB2'
-            storeFile file('C:/Users/User/Documents/keystore.jks')
-            storePassword '5ZalnqB2'
-        }
+    
     }
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
